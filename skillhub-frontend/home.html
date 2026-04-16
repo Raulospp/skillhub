@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Inicio</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    body { background: var(--bg); }
+    .hero {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 60px 80px;
+      gap: 80px;
+      min-height: calc(100vh - 60px - 260px);
+    }
+    .hero-text { max-width: 420px; }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: 3.2rem;
+      color: var(--black);
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .hero-sub { font-size: 0.95rem; color: var(--gray-text); margin-bottom: 28px; line-height: 1.6; }
+    .hero-actions { display: flex; gap: 12px; }
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      padding: 11px 22px;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .btn-secondary {
+      background: transparent;
+      border: 1.5px solid var(--gray-mid);
+      color: var(--black);
+      border-radius: 8px;
+      padding: 11px 22px;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+    .hero-card {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .floating-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 28px 24px;
+      width: 320px;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.10);
+      transform: rotate(1.5deg);
+    }
+
+    /* Modal calificación */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 32px;
+      width: 380px;
+      max-width: 90vw;
+    }
+    .modal h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
+    .stars { display: flex; gap: 8px; margin-bottom: 16px; }
+    .star { font-size: 1.8rem; cursor: pointer; opacity: 0.3; transition: opacity 0.1s; }
+    .star.active { opacity: 1; }
+    .modal textarea {
+      width: 100%;
+      border: 1.5px solid var(--gray-mid);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      resize: vertical;
+      min-height: 80px;
+      outline: none;
+    }
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .modal-cancel {
+      flex: 1;
+      background: transparent;
+      border: 1.5px solid var(--gray-mid);
+      border-radius: 8px;
+      padding: 10px;
+      font-family: var(--font-body);
+      cursor: pointer;
+    }
+    .modal-submit {
+      flex: 2;
+      background: var(--black);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    footer {
+      background: var(--white);
+      border-top: 1px solid #e0ddd8;
+      padding: 48px 80px;
+      display: flex;
+      gap: 80px;
+      align-items: flex-start;
+    }
+    .footer-col-title { font-size: 0.8rem; font-weight: 600; color: var(--black); margin-bottom: 14px; }
+    .footer-links { display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem; color: var(--gray-text); }
+    .footer-links a { color: var(--gray-text); text-decoration: none; cursor: pointer; }
+    .footer-links a:hover { color: var(--black); }
+
+    @media (max-width: 768px) {
+      .hero { flex-direction: column; padding: 32px 24px; gap: 32px; }
+      .hero-card { display: none; }
+      footer { flex-direction: column; gap: 32px; padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="home.html" class="navbar-logo">
+    <svg width="24" height="24" viewBox="0 0 52 52" fill="none">
+      <rect width="52" height="52" rx="14" fill="#111"/>
+      <text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text>
+    </svg>
+    SkillHub
+  </a>
+  <input type="text" class="navbar-search" placeholder="Buscar servicios..."
+    onfocus="window.location.href='explore.html'"/>
+  <div class="navbar-spacer"></div>
+  <a href="profile.html" class="btn-nav">Perfil profesional</a>
+  <a href="profile.html" class="avatar-btn">
+    <div class="avatar-inner" id="nav-avatar">SV</div>
+  </a>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-text">
+    <h1 class="hero-title">Herramienta para todos</h1>
+    <p class="hero-sub">Califica el servicio recibido y ayuda a crecer la comunidad</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('modal-calificar').classList.add('open')">Calificar</button>
+      <a href="explore.html" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;">Ver perfiles</a>
+    </div>
+  </div>
+
+  <!-- Tarjeta flotante con datos dinámicos -->
+  <div class="hero-card">
+    <div class="floating-card" id="floating-profile">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#c8b8a2,#a08060);display:flex;align-items:center;justify-content:center;font-weight:600;color:white;font-size:1.1rem;" id="hero-avatar">SV</div>
+        <div>
+          <div style="font-size:0.95rem;font-weight:600;color:var(--black);" id="hero-nombre">Cargando...</div>
+          <div style="font-size:0.77rem;color:var(--gray-text);" id="hero-rol">SkillHub</div>
+        </div>
+      </div>
+      <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.04em;color:var(--gray-text);text-transform:uppercase;margin-bottom:8px;">Mis servicios</div>
+      <div id="hero-servicios" style="font-size:0.82rem;color:#555;line-height:1.8;">Cargando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal calificar -->
+<div class="modal-overlay" id="modal-calificar">
+  <div class="modal">
+    <h3>Calificar servicio recibido</h3>
+    <div class="stars" id="stars">
+      <span class="star" data-val="1">★</span>
+      <span class="star" data-val="2">★</span>
+      <span class="star" data-val="3">★</span>
+      <span class="star" data-val="4">★</span>
+      <span class="star" data-val="5">★</span>
+    </div>
+    <textarea id="comentario-resena" placeholder="Describe tu experiencia..."></textarea>
+    <p class="error-msg" id="error-resena"></p>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="document.getElementById('modal-calificar').classList.remove('open')">Cancelar</button>
+      <button class="modal-submit" id="btn-enviar-resena">Enviar calificación</button>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div style="max-width:260px;">
+    <div style="font-weight:600;font-size:0.95rem;color:var(--black);margin-bottom:6px;">SkillHub</div>
+    <div style="font-size:0.82rem;color:var(--gray-text);line-height:1.5;margin-bottom:20px;">Banco Digital de Habilidades para Mujeres y Jóvenes</div>
+  </div>
+  <div>
+    <div class="footer-col-title">Servicios</div>
+    <div class="footer-links">
+      <a href="profile.html">Publicar servicio</a>
+      <a href="profile.html">Editar servicio</a>
+      <a href="explore.html">Ver servicios</a>
+    </div>
+  </div>
+  <div>
+    <div class="footer-col-title">Soporte</div>
+    <div class="footer-links">
+      <a href="#">Contacto</a>
+      <a href="#">Legal</a>
+      <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script>
+  requireAuth();
+
+  const usuario = getUsuario();
+  if (usuario) {
+    document.getElementById('nav-avatar').textContent = iniciales(usuario.nombre);
+    document.getElementById('hero-avatar').textContent = iniciales(usuario.nombre);
+    document.getElementById('hero-nombre').textContent = usuario.nombre;
+  }
+
+  // Cargar perfil completo
+  async function cargarPerfil() {
+    if (!usuario) return;
+    try {
+      const perfil = await obtenerPerfil(usuario.id);
+      document.getElementById('hero-rol').textContent = perfil.rol || 'Miembro de SkillHub';
+      if (perfil.serviciosOfrece && perfil.serviciosOfrece.length > 0) {
+        document.getElementById('hero-servicios').textContent =
+          perfil.serviciosOfrece.map(s => s.titulo).join(' · ');
+      } else {
+        document.getElementById('hero-servicios').textContent = 'Aún sin servicios publicados';
+      }
+    } catch (e) {
+      document.getElementById('hero-servicios').textContent = 'No se pudo cargar';
+    }
+  }
+
+  cargarPerfil();
+
+  // Estrellas
+  let puntuacion = 0;
+  document.querySelectorAll('.star').forEach(star => {
+    star.addEventListener('click', () => {
+      puntuacion = parseInt(star.dataset.val);
+      document.querySelectorAll('.star').forEach((s, i) => {
+        s.classList.toggle('active', i < puntuacion);
+      });
+    });
+  });
+
+  // Enviar reseña
+  document.getElementById('btn-enviar-resena').addEventListener('click', async () => {
+    const comentario = document.getElementById('comentario-resena').value.trim();
+    ocultarError('error-resena');
+
+    if (!puntuacion) { mostrarError('error-resena', 'Selecciona una puntuación'); return; }
+    if (!comentario) { mostrarError('error-resena', 'Escribe un comentario'); return; }
+
+    const btn = document.getElementById('btn-enviar-resena');
+    setBtnLoading(btn, true, 'Enviar calificación');
+
+    try {
+      await crearResena({
+        autorId: usuario.id,
+        receptorId: usuario.id, // En producción se pasaría el ID del proveedor
+        puntuacion,
+        comentario,
+      });
+      document.getElementById('modal-calificar').classList.remove('open');
+      puntuacion = 0;
+      document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+      document.getElementById('comentario-resena').value = '';
+      alert('¡Calificación enviada!');
+    } catch (err) {
+      mostrarError('error-resena', err.message || 'Error al enviar');
+    } finally {
+      setBtnLoading(btn, false, 'Enviar calificación');
+    }
+  });
+</script>
+</body>
+</html>

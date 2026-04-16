@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Validación de identidad</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    .upload-area {
+      border: 1.5px dashed var(--gray-mid);
+      border-radius: 10px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      background: var(--white);
+    }
+    .upload-area:hover { border-color: var(--black); }
+    .upload-area.has-file { border-color: #2ecc71; border-style: solid; }
+    .upload-area input[type="file"] { display: none; }
+    .upload-label { font-size: 0.83rem; color: var(--gray-text); margin-top: 8px; display: block; }
+    .upload-name { font-size: 0.83rem; color: var(--black); font-weight: 500; }
+    .divider { height: 1px; background: var(--gray-mid); margin: 20px 0; opacity: 0.4; }
+    .success-box {
+      background: #f0faf4;
+      border: 1px solid #a8e6c3;
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: #1a6b3a;
+      display: none;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+<div class="form-page">
+  <div class="form-left">
+    <div class="form-logo">
+      <svg width="40" height="40" viewBox="0 0 52 52" fill="none">
+        <rect width="52" height="52" rx="14" fill="#111"/>
+        <text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text>
+      </svg>
+      <span class="logo-text">SkillHub</span>
+    </div>
+
+    <div class="steps">
+      <div class="step-dot"></div>
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <div class="form-title">Validación de Identidad</div>
+    <div class="form-subtitle">Ingresa tus datos para completar el registro en SkillHub</div>
+
+    <div class="form-fields">
+      <div class="field">
+        <input type="date" id="fecha-nac" placeholder="Fecha de nacimiento"/>
+      </div>
+
+      <div class="divider"></div>
+
+      <p style="font-size:0.8rem;color:var(--gray-text);margin-bottom:8px;">Sube documento de identidad o carnet estudiantil</p>
+
+      <div class="upload-area" id="upload-area" onclick="document.getElementById('doc-file').click()">
+        <input type="file" id="doc-file" accept="image/*,.pdf" onchange="manejarArchivo(this)"/>
+        <div style="font-size:1.5rem;">📎</div>
+        <span class="upload-label" id="upload-label">Toca para adjuntar documento</span>
+      </div>
+
+      <p class="error-msg" id="error-identity"></p>
+    </div>
+
+    <button class="btn-submit" id="btn-identity" style="margin-top:28px">Solicitar acceso</button>
+
+    <div class="success-box" id="success-box">
+      ✅ Solicitud enviada. Tu cuenta está pendiente de revisión. Te notificaremos pronto.
+      <br/><br/>
+      <a href="login.html" style="color:#1a6b3a;font-weight:500;">Ir al login</a>
+    </div>
+
+    <div class="form-note" id="pending-note" style="margin-top:16px">
+      Pendiente por revisión mientras se valida la información
+    </div>
+
+    <a href="register.html" class="form-back">← Volver</a>
+  </div>
+
+  <div class="form-right" style="position:relative;">
+    <div class="profile-card card-front">
+      <div class="card-header">
+        <div class="avatar-card" id="preview-avatar">?</div>
+        <div>
+          <div class="card-name" id="preview-nombre">Tu nombre</div>
+          <div class="card-role">Nuevo en SkillHub</div>
+        </div>
+      </div>
+      <div class="section-label">Estado</div>
+      <p style="font-size:0.8rem;color:#555;">Cuenta pendiente de verificación</p>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  // Mostrar nombre del usuario recién registrado
+  const nuevoId = sessionStorage.getItem('nuevo_usuario_id');
+  if (!nuevoId) window.location.href = 'register.html';
+
+  let archivoSeleccionado = null;
+
+  function manejarArchivo(input) {
+    if (input.files && input.files[0]) {
+      archivoSeleccionado = input.files[0];
+      document.getElementById('upload-label').innerHTML = `<span class="upload-name">${archivoSeleccionado.name}</span>`;
+      document.getElementById('upload-area').classList.add('has-file');
+    }
+  }
+
+  document.getElementById('btn-identity').addEventListener('click', async () => {
+    const fecha = document.getElementById('fecha-nac').value;
+    ocultarError('error-identity');
+
+    if (!fecha) {
+      mostrarError('error-identity', 'Ingresa tu fecha de nacimiento');
+      return;
+    }
+
+    const btn = document.getElementById('btn-identity');
+    setBtnLoading(btn, true, 'Solicitar acceso');
+
+    try {
+      // En producción: subir el archivo a un storage (S3, Cloudinary) y usar la URL
+      // Por ahora usamos el nombre del archivo como placeholder
+      const documentoUrl = archivoSeleccionado ? archivoSeleccionado.name : 'pendiente';
+
+      await validarIdentidad(nuevoId, fecha, documentoUrl);
+
+      // Mostrar confirmación
+      document.getElementById('success-box').style.display = 'block';
+      document.getElementById('pending-note').style.display = 'none';
+      btn.style.display = 'none';
+
+      // Limpiar sesión temporal
+      sessionStorage.removeItem('nuevo_usuario_id');
+    } catch (err) {
+      mostrarError('error-identity', err.message || 'Error al enviar la solicitud');
+    } finally {
+      setBtnLoading(btn, false, 'Solicitar acceso');
+    }
+  });
+</script>
+</body>
+</html>

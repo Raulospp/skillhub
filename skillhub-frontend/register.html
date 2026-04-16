@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Crear cuenta</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<div class="form-page">
+  <div class="form-left">
+    <div class="form-logo">
+      <svg width="40" height="40" viewBox="0 0 52 52" fill="none">
+        <rect width="52" height="52" rx="14" fill="#111"/>
+        <text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text>
+      </svg>
+      <span class="logo-text">SkillHub</span>
+    </div>
+
+    <div class="steps">
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <div class="form-title">Crear una cuenta</div>
+    <div class="form-subtitle">Introduce tus datos para registrarte en SkillHub</div>
+
+    <div class="form-fields">
+      <div class="field">
+        <input type="text" id="nombre" placeholder="Nombre completo" autocomplete="name"/>
+      </div>
+      <div class="field">
+        <input type="email" id="email" placeholder="email@domain.com" autocomplete="email"/>
+      </div>
+      <div class="field">
+        <input type="password" id="password" placeholder="Contraseña (mín. 6 caracteres)"/>
+      </div>
+      <div class="field">
+        <input type="password" id="confirmar" placeholder="Confirmar contraseña"/>
+      </div>
+      <p class="error-msg" id="error-reg"></p>
+    </div>
+
+    <button class="btn-submit" id="btn-register">Siguiente paso</button>
+
+    <div class="form-note">
+      ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
+    </div>
+
+    <a href="index.html" class="form-back">← Volver</a>
+  </div>
+
+  <div class="form-right" style="position:relative;">
+    <div class="profile-card card-front">
+      <div class="card-header">
+        <div class="avatar-card">SL</div>
+        <div>
+          <div class="card-name">Sara Lawrence</div>
+          <div class="card-role">Diseñadora · San Francisco</div>
+        </div>
+      </div>
+      <div class="section-label">Acerca de</div>
+      <p style="font-size:0.8rem;color:#555;line-height:1.55;">Diseñadora UX apasionada por crear experiencias intuitivas.</p>
+      <div class="section-label">Experiencia</div>
+      <div style="font-size:0.72rem;color:var(--gray-text);">2017 — Actualidad</div>
+      <div style="font-size:0.82rem;font-weight:500;">Diseñadora Senior en Magic Design Co ↗</div>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  if (estaLogueado()) window.location.href = 'home.html';
+
+  const btnReg = document.getElementById('btn-register');
+
+  btnReg.addEventListener('click', async () => {
+    const nombre   = document.getElementById('nombre').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmar = document.getElementById('confirmar').value;
+
+    ocultarError('error-reg');
+
+    if (!nombre || !email || !password || !confirmar) {
+      mostrarError('error-reg', 'Por favor completa todos los campos');
+      return;
+    }
+
+    if (password !== confirmar) {
+      mostrarError('error-reg', 'Las contraseñas no coinciden');
+      return;
+    }
+
+    if (password.length < 6) {
+      mostrarError('error-reg', 'La contraseña debe tener mínimo 6 caracteres');
+      return;
+    }
+
+    setBtnLoading(btnReg, true, 'Siguiente paso');
+
+    try {
+      const usuario = await registro(nombre, email, password);
+      // Guardar ID temporalmente para el siguiente paso de identidad
+      sessionStorage.setItem('nuevo_usuario_id', usuario._id);
+      sessionStorage.setItem('nuevo_usuario_email', email);
+      sessionStorage.setItem('nuevo_usuario_password', password);
+      window.location.href = 'identity.html';
+    } catch (err) {
+      mostrarError('error-reg', err.message || 'Error al crear la cuenta');
+    } finally {
+      setBtnLoading(btnReg, false, 'Siguiente paso');
+    }
+  });
+</script>
+</body>
+</html>

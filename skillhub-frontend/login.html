@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Iniciar sesión</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<div class="form-page">
+  <div class="form-left">
+    <div class="form-logo">
+      <svg width="40" height="40" viewBox="0 0 52 52" fill="none">
+        <rect width="52" height="52" rx="14" fill="#111"/>
+        <text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text>
+      </svg>
+      <span class="logo-text">SkillHub</span>
+    </div>
+
+    <div class="steps">
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <div class="form-title">Iniciar sesión</div>
+    <div class="form-subtitle">Introduce tu correo electrónico para iniciar sesión en SkillHub</div>
+
+    <div class="form-fields">
+      <div class="field">
+        <input type="email" id="email" placeholder="email@domain.com" autocomplete="email"/>
+      </div>
+      <div class="field">
+        <input type="password" id="password" placeholder="Contraseña" autocomplete="current-password"/>
+      </div>
+      <p class="error-msg" id="error-login"></p>
+    </div>
+
+    <button class="btn-submit" id="btn-login">Iniciar sesión</button>
+
+    <div class="form-note">
+      ¿No tienes cuenta? <a href="register.html">Regístrate</a>
+    </div>
+
+    <a href="index.html" class="form-back">← Volver</a>
+  </div>
+
+  <!-- Lado decorativo -->
+  <div class="form-right" style="position:relative;">
+    <div class="profile-card card-front">
+      <div class="card-header">
+        <div class="avatar-card">SL</div>
+        <div>
+          <div class="card-name">Sara Lawrence</div>
+          <div class="card-role">Diseñadora en San Francisco</div>
+        </div>
+      </div>
+      <div class="section-label">Acerca de</div>
+      <p style="font-size:0.8rem;color:#555;line-height:1.55;">Diseñadora UX apasionada por crear experiencias intuitivas.</p>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  if (estaLogueado()) window.location.href = 'home.html';
+
+  const btnLogin = document.getElementById('btn-login');
+
+  btnLogin.addEventListener('click', async () => {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    ocultarError('error-login');
+
+    if (!email || !password) {
+      mostrarError('error-login', 'Por favor completa todos los campos');
+      return;
+    }
+
+    setBtnLoading(btnLogin, true, 'Iniciar sesión');
+
+    try {
+      await login(email, password);
+      window.location.href = 'home.html';
+    } catch (err) {
+      mostrarError('error-login', err.message || 'Email o contraseña incorrectos');
+    } finally {
+      setBtnLoading(btnLogin, false, 'Iniciar sesión');
+    }
+  });
+
+  // Enter para enviar
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') btnLogin.click();
+  });
+</script>
+</body>
+</html>

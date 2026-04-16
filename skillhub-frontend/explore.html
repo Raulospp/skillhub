@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Explorar</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    body { background: #f5f4f1; }
+    .category-bar {
+      background: var(--white);
+      border-bottom: 1px solid #e0ddd8;
+      padding: 12px 32px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+    }
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .pcard-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .pcard-name { font-size: 0.92rem; font-weight: 600; color: var(--black); }
+    .pcard-role { font-size: 0.78rem; color: var(--gray-text); margin-top: 2px; }
+    .pcard-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .pcard-skills { font-size: 0.8rem; color: #444; line-height: 1.6; }
+    .pcard-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #f0ede8;
+    }
+    .pcard-rating { font-size: 0.78rem; color: var(--gray-text); }
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 32px;
+      color: var(--gray-text);
+      text-align: center;
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #f0ede8 25%, #e8e5e0 50%, #f0ede8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+      height: 16px;
+      margin-bottom: 8px;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="home.html" class="navbar-logo">
+    <svg width="24" height="24" viewBox="0 0 52 52" fill="none">
+      <rect width="52" height="52" rx="14" fill="#111"/>
+      <text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text>
+    </svg>
+    SkillHub
+  </a>
+  <input id="search-input" type="text" class="navbar-search" placeholder="Buscar por nombre o habilidad..."
+    oninput="filtrarLocal(this.value)"/>
+  <button style="background:transparent;border:1.5px solid var(--gray-mid);border-radius:8px;padding:8px 14px;cursor:pointer;font-family:var(--font-body);font-size:0.82rem;color:var(--black);">
+    ⚙ Filtros
+  </button>
+  <div class="navbar-spacer"></div>
+  <a href="profile.html" class="btn-nav">Perfil profesional</a>
+  <a href="profile.html" class="avatar-btn">
+    <div class="avatar-inner" id="nav-avatar">SV</div>
+  </a>
+</nav>
+
+<!-- Chips de categorías -->
+<div class="category-bar">
+  <button class="chip active" onclick="filtrarPorCategoria(this, '')">Todos</button>
+  <button class="chip" onclick="filtrarPorCategoria(this, 'Tecnología')">Tecnología</button>
+  <button class="chip" onclick="filtrarPorCategoria(this, 'Diseño')">Diseño</button>
+  <button class="chip" onclick="filtrarPorCategoria(this, 'Bienestar')">Bienestar</button>
+  <button class="chip" onclick="filtrarPorCategoria(this, 'Finanzas')">Finanzas</button>
+  <button class="chip" onclick="filtrarPorCategoria(this, 'Idiomas')">Idiomas</button>
+  <button class="chip" onclick="filtrarPorCategoria(this, 'Marketing')">Marketing</button>
+</div>
+
+<div class="profile-grid" id="profile-grid"></div>
+
+<div class="empty-state" id="empty-state">
+  <div style="font-size:2rem;margin-bottom:12px;">🔍</div>
+  <div style="font-size:1rem;font-weight:500;color:var(--black);margin-bottom:6px;">Sin resultados</div>
+  <div style="font-size:0.85rem;">Prueba con otro término o categoría</div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  requireAuth();
+
+  const usuario = getUsuario();
+  if (usuario) document.getElementById('nav-avatar').textContent = iniciales(usuario.nombre);
+
+  let todosLosUsuarios = [];
+  let categoriaActiva = '';
+
+  // Colores para avatares
+  const colores = [
+    'linear-gradient(135deg,#c8b090,#a07050)',
+    'linear-gradient(135deg,#8090a0,#506070)',
+    'linear-gradient(135deg,#c8b8a2,#a08060)',
+    'linear-gradient(135deg,#a0c8a0,#608060)',
+    'linear-gradient(135deg,#d0a0c0,#a06080)',
+    'linear-gradient(135deg,#a0b8d0,#607090)',
+    'linear-gradient(135deg,#c0d0a0,#809060)',
+    'linear-gradient(135deg,#b0a0d0,#706090)',
+  ];
+
+  function colorPorIndice(i) {
+    return colores[i % colores.length];
+  }
+
+  function renderCard(u, index) {
+    const servicios = u.serviciosOfrece || [];
+    const cats = [...new Set(servicios.map(s => s.categoria).filter(Boolean))];
+    const habilidades = servicios.map(s => s.titulo).slice(0, 3).join(' · ') || 'Sin servicios aún';
+    const esPropio = usuario && u._id === usuario.id;
+
+    return `
+      <a class="pcard" href="${esPropio ? 'profile.html' : 'profile.html?id=' + u._id}">
+        <div class="pcard-header">
+          <div class="pcard-avatar" style="background:${colorPorIndice(index)}">${iniciales(u.nombre)}</div>
+          <div>
+            <div class="pcard-name">${u.nombre}</div>
+            <div class="pcard-role">${u.rol || 'Miembro'} · ${u.ciudad || 'Colombia'}</div>
+          </div>
+        </div>
+        <div class="pcard-tags">
+          ${cats.slice(0,3).map(c => `<span class="pcard-tag">${c}</span>`).join('')}
+        </div>
+        <div class="pcard-skills">${habilidades}</div>
+        <div class="pcard-footer">
+          <span class="pcard-rating">⭐ ${u.valoracion?.toFixed(1) || '—'}</span>
+          <span class="pcard-hours">${u.horasAportadas || 0} h compartidas</span>
+        </div>
+      </a>`;
+  }
+
+  function renderSkeletons() {
+    const grid = document.getElementById('profile-grid');
+    grid.innerHTML = Array(6).fill(`
+      <div class="pcard" style="pointer-events:none">
+        <div style="display:flex;gap:12px;margin-bottom:14px;">
+          <div class="skeleton" style="width:46px;height:46px;border-radius:50%;flex-shrink:0;"></div>
+          <div style="flex:1"><div class="skeleton" style="width:60%"></div><div class="skeleton" style="width:40%"></div></div>
+        </div>
+        <div class="skeleton"></div>
+        <div class="skeleton" style="width:70%"></div>
+      </div>`).join('');
+  }
+
+  function renderGrid(usuarios) {
+    const grid = document.getElementById('profile-grid');
+    const empty = document.getElementById('empty-state');
+    if (!usuarios.length) {
+      grid.innerHTML = '';
+      empty.style.display = 'flex';
+      return;
+    }
+    empty.style.display = 'none';
+    grid.innerHTML = usuarios.map((u, i) => renderCard(u, i)).join('');
+  }
+
+  async function cargarUsuarios(categoria) {
+    renderSkeletons();
+    try {
+      todosLosUsuarios = await listarUsuarios(categoria || undefined);
+      renderGrid(todosLosUsuarios);
+    } catch (e) {
+      document.getElementById('profile-grid').innerHTML =
+        `<p style="color:var(--gray-text);font-size:0.85rem;padding:32px;">No se pudieron cargar los perfiles. ¿Está corriendo el backend?</p>`;
+    }
+  }
+
+  function filtrarPorCategoria(btn, categoria) {
+    categoriaActiva = categoria;
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    cargarUsuarios(categoria);
+  }
+
+  function filtrarLocal(texto) {
+    const v = texto.toLowerCase();
+    const filtrados = todosLosUsuarios.filter(u =>
+      u.nombre?.toLowerCase().includes(v) ||
+      u.rol?.toLowerCase().includes(v) ||
+      u.ciudad?.toLowerCase().includes(v) ||
+      u.serviciosOfrece?.some(s => s.titulo?.toLowerCase().includes(v))
+    );
+    renderGrid(filtrados);
+  }
+
+  cargarUsuarios('');
+</script>
+</body>
+</html>

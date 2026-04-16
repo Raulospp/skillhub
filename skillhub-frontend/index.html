@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    #screen-landing { display: flex; flex-direction: row; align-items: stretch; min-height: 100vh; }
+
+    .landing-left {
+      width: 340px;
+      min-width: 300px;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 48px 40px 36px;
+    }
+
+    .logo-wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+    .logo-icon { width: 52px; height: 52px; }
+    .logo-big { font-family: var(--font-display); font-size: 2.4rem; color: var(--black); letter-spacing: -0.5px; }
+
+    .landing-cta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--black);
+      border-radius: 40px;
+      padding: 10px 10px 10px 16px;
+    }
+
+    .cta-label { color: rgba(255,255,255,0.6); font-size: 0.85rem; font-weight: 500; flex: 1; }
+
+    .btn-ghost {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 30px;
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+    .btn-ghost:hover { color: #fff; }
+
+    .btn-solid {
+      background: var(--white);
+      color: var(--black);
+      border: none;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-solid:hover { background: #f0ede8; }
+
+    .landing-right {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      padding: 32px 24px 32px 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      #screen-landing { flex-direction: column; }
+      .landing-left { width: 100%; }
+      .landing-right { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div id="screen-landing">
+  <div class="landing-left">
+    <div class="logo-wrap">
+      <svg class="logo-icon" viewBox="0 0 52 52" fill="none">
+        <rect width="52" height="52" rx="14" fill="#111"/>
+        <text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text>
+      </svg>
+      <span class="logo-big">SkillHub</span>
+    </div>
+
+    <div class="landing-cta">
+      <span class="cta-label">SkillHub</span>
+      <a href="register.html" class="btn-ghost">Regístrate aquí</a>
+      <a href="login.html" class="btn-solid">Inicia sesión</a>
+    </div>
+  </div>
+
+  <div class="landing-right">
+    <div class="profile-card card-front">
+      <div class="card-header">
+        <div class="avatar-card">SL</div>
+        <div>
+          <div class="card-name">Sara Lawrence</div>
+          <div class="card-role">Diseñadora en San Francisco</div>
+          <span class="card-badge">SkillHub</span>
+        </div>
+      </div>
+      <div class="section-label">Acerca de</div>
+      <p style="font-size:0.8rem;color:#555;line-height:1.55;">Soy una apasionada diseñadora UX que busca crear experiencias intuitivas y atractivas.</p>
+      <div class="section-label">Experiencia</div>
+      <div style="font-size:0.72rem;color:var(--gray-text);margin-bottom:2px;">2017 — Actualidad</div>
+      <div style="font-size:0.82rem;font-weight:500;color:var(--black);">Diseñadora en Empresa ↗</div>
+      <div style="font-size:0.75rem;color:var(--gray-text);">San Francisco, EE.UU.</div>
+    </div>
+
+    <div class="profile-card card-back" style="position:absolute;right:-20px;top:50%;transform:translateY(-50%) rotate(2deg);width:280px;opacity:0.92;z-index:0;">
+      <div class="card-header">
+        <div class="avatar-card" style="background:linear-gradient(135deg,#8090a0,#506070)">AC</div>
+        <div>
+          <div class="card-name">Adam Chen</div>
+          <div class="card-role">Artista en Nueva York</div>
+          <span class="card-badge">SkillHub</span>
+        </div>
+      </div>
+      <div class="section-label">Acerca de</div>
+      <p style="font-size:0.8rem;color:#555;line-height:1.55;">Artista contemporáneo especializado en técnicas mixtas.</p>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  // Si ya está logueado, redirigir al home
+  if (estaLogueado()) window.location.href = 'home.html';
+</script>
+</body>
+</html>
