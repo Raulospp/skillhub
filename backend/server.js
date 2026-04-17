@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 // ── Conexión a MongoDB Atlas ──────────────────────────────────────────────────
-const MONGO_URI = 'mongodb+srv://skillhub_user:skilhub1234@cluster0.mongodb.net/skillhub?retryWrites=true&w=majority';
+const MONGO_URI = 'mongodb+srv://skillhub_user:skilhub1234@cluster0.mselynh.mongodb.net/skillhub?retryWrites=true&w=majority&appName=Cluster0';
 const JWT_SECRET = 'skillhub_secret_2024';
 
 mongoose.connect(MONGO_URI)
