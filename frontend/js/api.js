@@ -1,9 +1,8 @@
-// js/api.js — Servicio central de llamadas al backend NestJS
-// Todas las pantallas importan desde aquí
+// js/api.js — Servicio central de llamadas al backend SkillHub
 
-const API = 'http://localhost:3000/api';
+const API = 'https://automatic-orbit-wrjgqpxg4prwfg4q6-3000.app.github.dev/api';
 
-// ── Helpers ─────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function getToken() {
   return localStorage.getItem('access_token');
@@ -29,7 +28,6 @@ function estaLogueado() {
   return !!getToken();
 }
 
-// Headers con JWT para rutas protegidas
 function authHeaders() {
   return {
     'Content-Type': 'application/json',
@@ -43,7 +41,7 @@ async function handleResponse(res) {
   return data;
 }
 
-// ── AUTH ─────────────────────────────────────────────────────────────────────
+// ── AUTH ──────────────────────────────────────────────────────────────────────
 
 async function login(email, password) {
   const res = await fetch(`${API}/auth/login`, {
@@ -65,7 +63,7 @@ async function registro(nombre, email, password) {
   return handleResponse(res);
 }
 
-// ── USUARIOS ─────────────────────────────────────────────────────────────────
+// ── USUARIOS ──────────────────────────────────────────────────────────────────
 
 async function obtenerPerfil(id) {
   const res = await fetch(`${API}/usuarios/${id}`, {
@@ -92,7 +90,7 @@ async function validarIdentidad(id, fechaNacimiento, documentoUrl) {
   return handleResponse(res);
 }
 
-// ── SERVICIOS (explorar) ──────────────────────────────────────────────────────
+// ── SERVICIOS ─────────────────────────────────────────────────────────────────
 
 async function listarUsuarios(categoria) {
   const params = categoria ? `?categoria=${encodeURIComponent(categoria)}` : '';
@@ -148,7 +146,7 @@ async function crearResena(datos) {
   return handleResponse(res);
 }
 
-// ── Utilidades de UI ──────────────────────────────────────────────────────────
+// ── Utilidades UI ─────────────────────────────────────────────────────────────
 
 function mostrarError(elementId, mensaje) {
   const el = document.getElementById(elementId);
@@ -170,14 +168,12 @@ function setBtnLoading(btn, loading, textoOriginal) {
   }
 }
 
-// Redirigir si no está logueado (usar en páginas protegidas)
 function requireAuth() {
   if (!estaLogueado()) {
     window.location.href = 'login.html';
   }
 }
 
-// Iniciales a partir del nombre
 function iniciales(nombre) {
   return nombre ? nombre.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : '??';
 }
