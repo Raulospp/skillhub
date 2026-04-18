@@ -6,6 +6,31 @@
   <title>SkillHub — Crear cuenta</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    .role-selector { display: flex; gap: 10px; margin-top: 24px; }
+    .role-card {
+      flex: 1; border: 2px solid var(--gray-mid); border-radius: 12px;
+      padding: 16px 14px; cursor: pointer; transition: all 0.2s; text-align: center;
+      background: var(--white);
+    }
+    .role-card:hover { border-color: var(--black); }
+    .role-card.selected { border-color: var(--black); background: #f5f4f1; }
+    .role-card input { display: none; }
+    .role-icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .role-title { font-size: 0.88rem; font-weight: 600; color: var(--black); }
+    .role-desc  { font-size: 0.75rem; color: var(--gray-text); margin-top: 2px; }
+
+    .genero-options { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+    .genero-chip {
+      padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;
+      border: 1.5px solid var(--gray-mid); background: var(--white); color: var(--gray-text);
+      font-family: var(--font-body); transition: all 0.15s;
+    }
+    .genero-chip.selected { background: var(--black); color: white; border-color: var(--black); }
+
+    .empresa-fields { display: none; margin-top: 10px; }
+    .empresa-fields.visible { display: flex; flex-direction: column; gap: 10px; }
+  </style>
 </head>
 <body>
 <div class="form-page">
@@ -25,25 +50,63 @@
     </div>
 
     <div class="form-title">Crear una cuenta</div>
-    <div class="form-subtitle">Introduce tus datos para registrarte en SkillHub</div>
+    <div class="form-subtitle">¿Cómo quieres usar SkillHub?</div>
 
-    <div class="form-fields">
-      <div class="field">
-        <input type="text" id="nombre" placeholder="Nombre completo" autocomplete="name"/>
+    <!-- Selector de rol -->
+    <div class="role-selector">
+      <label class="role-card" id="card-candidata" onclick="seleccionarRol('candidata')">
+        <input type="radio" name="rol" value="candidata"/>
+        <div class="role-icon">👩‍💼</div>
+        <div class="role-title">Soy candidata</div>
+        <div class="role-desc">Busco trabajo u oportunidades</div>
+      </label>
+      <label class="role-card" id="card-empresa" onclick="seleccionarRol('empresa')">
+        <input type="radio" name="rol" value="empresa"/>
+        <div class="role-icon">🏢</div>
+        <div class="role-title">Soy empresa</div>
+        <div class="role-desc">Quiero publicar ofertas</div>
+      </label>
+    </div>
+
+    <div class="form-fields" style="margin-top:16px">
+
+      <!-- Campos básicos -->
+      <div class="field"><input type="text"  id="nombre"   placeholder="Nombre completo"/></div>
+      <div class="field"><input type="email" id="email"    placeholder="email@domain.com"/></div>
+      <div class="field"><input type="password" id="password"  placeholder="Contraseña (mín. 6 caracteres)"/></div>
+      <div class="field"><input type="password" id="confirmar" placeholder="Confirmar contraseña"/></div>
+
+      <!-- Género (solo candidatas) -->
+      <div id="genero-section" style="display:none">
+        <div style="font-size:0.78rem;color:var(--gray-text);margin-bottom:6px;font-weight:500;">Me identifico como</div>
+        <div class="genero-options">
+          <button type="button" class="genero-chip" onclick="seleccionarGenero(this,'mujer')">Mujer</button>
+          <button type="button" class="genero-chip" onclick="seleccionarGenero(this,'joven')">Joven (18-29)</button>
+          <button type="button" class="genero-chip" onclick="seleccionarGenero(this,'otro')">Prefiero no decir</button>
+        </div>
       </div>
-      <div class="field">
-        <input type="email" id="email" placeholder="email@domain.com" autocomplete="email"/>
+
+      <!-- Campos empresa -->
+      <div class="empresa-fields" id="empresa-fields">
+        <div class="field"><input type="text" id="nombreEmpresa" placeholder="Nombre de la empresa"/></div>
+        <div class="field">
+          <select id="sectorEmpresa" style="width:100%;background:#fff;border:1.5px solid var(--gray-mid);border-radius:10px;padding:13px 16px;font-family:var(--font-body);font-size:0.85rem;color:var(--black);outline:none;">
+            <option value="">Sector de la empresa</option>
+            <option>Tecnología</option>
+            <option>Salud</option>
+            <option>Educación</option>
+            <option>Retail / Comercio</option>
+            <option>Manufactura</option>
+            <option>Servicios</option>
+            <option>Otro</option>
+          </select>
+        </div>
       </div>
-      <div class="field">
-        <input type="password" id="password" placeholder="Contraseña (mín. 6 caracteres)"/>
-      </div>
-      <div class="field">
-        <input type="password" id="confirmar" placeholder="Confirmar contraseña"/>
-      </div>
+
       <p class="error-msg" id="error-reg"></p>
     </div>
 
-    <button class="btn-submit" id="btn-register">Siguiente paso</button>
+    <button class="btn-submit" id="btn-register" onclick="registrar()">Siguiente paso</button>
 
     <div class="form-note">
       ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
@@ -58,14 +121,11 @@
         <div class="avatar-card">SL</div>
         <div>
           <div class="card-name">Sara Lawrence</div>
-          <div class="card-role">Diseñadora · San Francisco</div>
+          <div class="card-role">Candidata · San Francisco</div>
         </div>
       </div>
       <div class="section-label">Acerca de</div>
-      <p style="font-size:0.8rem;color:#555;line-height:1.55;">Diseñadora UX apasionada por crear experiencias intuitivas.</p>
-      <div class="section-label">Experiencia</div>
-      <div style="font-size:0.72rem;color:var(--gray-text);">2017 — Actualidad</div>
-      <div style="font-size:0.82rem;font-weight:500;">Diseñadora Senior en Magic Design Co ↗</div>
+      <p style="font-size:0.8rem;color:#555;line-height:1.55;">Diseñadora UX buscando nuevas oportunidades en tecnología.</p>
     </div>
   </div>
 </div>
@@ -74,46 +134,50 @@
 <script>
   if (estaLogueado()) window.location.href = 'home.html';
 
-  const btnReg = document.getElementById('btn-register');
+  let tipoSeleccionado = '';
+  let generoSeleccionado = '';
 
-  btnReg.addEventListener('click', async () => {
-    const nombre   = document.getElementById('nombre').value.trim();
-    const email    = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
+  function seleccionarRol(tipo) {
+    tipoSeleccionado = tipo;
+    document.getElementById('card-candidata').classList.toggle('selected', tipo === 'candidata');
+    document.getElementById('card-empresa').classList.toggle('selected',  tipo === 'empresa');
+    document.getElementById('genero-section').style.display  = tipo === 'candidata' ? 'block' : 'none';
+    document.getElementById('empresa-fields').classList.toggle('visible', tipo === 'empresa');
+  }
+
+  function seleccionarGenero(el, val) {
+    generoSeleccionado = val;
+    document.querySelectorAll('.genero-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  async function registrar() {
+    const nombre    = document.getElementById('nombre').value.trim();
+    const email     = document.getElementById('email').value.trim();
+    const password  = document.getElementById('password').value;
     const confirmar = document.getElementById('confirmar').value;
 
     ocultarError('error-reg');
 
-    if (!nombre || !email || !password || !confirmar) {
-      mostrarError('error-reg', 'Por favor completa todos los campos');
-      return;
-    }
+    if (!tipoSeleccionado) { mostrarError('error-reg', 'Selecciona si eres candidata o empresa'); return; }
+    if (!nombre || !email || !password) { mostrarError('error-reg', 'Completa todos los campos'); return; }
+    if (password !== confirmar)  { mostrarError('error-reg', 'Las contraseñas no coinciden'); return; }
+    if (password.length < 6)     { mostrarError('error-reg', 'Mínimo 6 caracteres'); return; }
 
-    if (password !== confirmar) {
-      mostrarError('error-reg', 'Las contraseñas no coinciden');
-      return;
-    }
-
-    if (password.length < 6) {
-      mostrarError('error-reg', 'La contraseña debe tener mínimo 6 caracteres');
-      return;
-    }
-
-    setBtnLoading(btnReg, true, 'Siguiente paso');
+    const btn = document.getElementById('btn-register');
+    setBtnLoading(btn, true, 'Siguiente paso');
 
     try {
-      const usuario = await registro(nombre, email, password);
-      // Guardar ID temporalmente para el siguiente paso de identidad
-      sessionStorage.setItem('nuevo_usuario_id', usuario._id);
-      sessionStorage.setItem('nuevo_usuario_email', email);
-      sessionStorage.setItem('nuevo_usuario_password', password);
+      const usuario = await registro(nombre, email, password, tipoSeleccionado, generoSeleccionado);
+      sessionStorage.setItem('nuevo_usuario_id',    usuario._id);
+      sessionStorage.setItem('nuevo_tipo_usuario',  tipoSeleccionado);
       window.location.href = 'identity.html';
     } catch (err) {
       mostrarError('error-reg', err.message || 'Error al crear la cuenta');
     } finally {
-      setBtnLoading(btnReg, false, 'Siguiente paso');
+      setBtnLoading(btn, false, 'Siguiente paso');
     }
-  });
+  }
 </script>
 </body>
 </html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Chat</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    body { background:#f5f4f1; display:flex; flex-direction:column; height:100vh; overflow:hidden; }
+    .chat-wrap { display:flex; flex:1; overflow:hidden; max-width:900px; margin:0 auto; width:100%; }
+
+    /* Lista de conversaciones */
+    .conv-list { width:260px; min-width:220px; background:var(--white); border-right:1px solid #e0ddd8; overflow-y:auto; flex-shrink:0; }
+    .conv-item { display:flex; align-items:center; gap:10px; padding:14px 16px; cursor:pointer; border-bottom:1px solid #f0ede8; transition:background .15s; }
+    .conv-item:hover, .conv-item.active { background:#f5f4f1; }
+    .conv-av { width:40px; height:40px; border-radius:50%; flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-weight:600; color:white; font-size:0.88rem; }
+    .conv-nombre { font-size:0.85rem; font-weight:500; color:var(--black); }
+    .conv-preview{ font-size:0.75rem; color:var(--gray-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px; }
+    .conv-badge { background:#111; color:white; font-size:0.65rem; border-radius:10px; padding:2px 7px; min-width:18px; text-align:center; }
+
+    /* Área de mensajes */
+    .chat-area { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+    .chat-header { background:var(--white); border-bottom:1px solid #e0ddd8; padding:14px 20px; display:flex; align-items:center; gap:12px; }
+    .chat-header-av { width:38px; height:38px; border-radius:50%; overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:600; color:white; }
+    .chat-header-nombre { font-size:0.92rem; font-weight:600; color:var(--black); }
+    .chat-header-sub    { font-size:0.75rem; color:var(--gray-text); }
+
+    .mensajes { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:10px; }
+    .msg { display:flex; align-items:flex-end; gap:8px; max-width:70%; }
+    .msg.mio { align-self:flex-end; flex-direction:row-reverse; }
+    .msg-av { width:28px; height:28px; border-radius:50%; flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:600; color:white; }
+    .msg-burbuja { padding:10px 14px; border-radius:16px; font-size:0.85rem; line-height:1.5; max-width:100%; }
+    .msg.otro .msg-burbuja { background:var(--white); color:var(--black); border-bottom-left-radius:4px; }
+    .msg.mio  .msg-burbuja { background:var(--black); color:white; border-bottom-right-radius:4px; }
+    .msg-hora { font-size:0.65rem; color:var(--gray-text); margin-top:2px; }
+
+    .chat-input { background:var(--white); border-top:1px solid #e0ddd8; padding:14px 20px; display:flex; gap:10px; align-items:flex-end; }
+    .chat-input textarea {
+      flex:1; border:1.5px solid var(--gray-mid); border-radius:10px; padding:10px 14px;
+      font-family:var(--font-body); font-size:0.85rem; resize:none; min-height:42px; max-height:120px;
+      outline:none; transition:border-color .2s; line-height:1.5;
+    }
+    .chat-input textarea:focus { border-color:var(--black); }
+    .btn-send {
+      background:var(--black); color:white; border:none; border-radius:10px; width:42px; height:42px;
+      cursor:pointer; font-size:1.1rem; flex-shrink:0; transition:background .2s;
+    }
+    .btn-send:hover { background:#2a2a2a; }
+    .empty-chat { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--gray-text); }
+    @media(max-width:600px){ .conv-list{ display:none; } }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="home.html" class="navbar-logo">
+    <svg width="24" height="24" viewBox="0 0 52 52" fill="none"><rect width="52" height="52" rx="14" fill="#111"/><text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text></svg>
+    SkillHub
+  </a>
+  <div class="navbar-spacer"></div>
+  <a href="profile.html" class="btn-nav">Mi perfil</a>
+  <a href="profile.html" class="avatar-btn">
+    <div class="avatar-inner" id="nav-avatar">SV</div>
+  </a>
+</nav>
+
+<div class="chat-wrap">
+  <!-- Lista conversaciones -->
+  <div class="conv-list" id="conv-list">
+    <div style="padding:14px 16px;font-size:0.78rem;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.04em">Mensajes</div>
+    <div id="convs"></div>
+  </div>
+
+  <!-- Área de chat -->
+  <div class="chat-area" id="chat-area">
+    <div class="empty-chat" id="empty-chat">
+      <div style="font-size:1.8rem;margin-bottom:10px">💬</div>
+      <div style="font-size:0.9rem;font-weight:500;color:var(--black)">Selecciona una conversación</div>
+    </div>
+    <div id="chat-activo" style="display:none;flex:1;display:none;flex-direction:column;overflow:hidden;">
+      <div class="chat-header" id="chat-header"></div>
+      <div class="mensajes" id="mensajes"></div>
+      <div class="chat-input">
+        <textarea id="txt-msg" placeholder="Escribe un mensaje..." rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviar()}"></textarea>
+        <button class="btn-send" onclick="enviar()">↑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  requireAuth();
+  const sesion = getUsuario();
+  if (sesion) document.getElementById('nav-avatar').textContent = iniciales(sesion.nombre);
+
+  const params    = new URLSearchParams(window.location.search);
+  const conParam  = params.get('con');
+  let   conActual = null;
+  let   interval  = null;
+
+  const colores = ['linear-gradient(135deg,#c8b8a2,#a08060)','linear-gradient(135deg,#a0c8a0,#608060)',
+    'linear-gradient(135deg,#d0a0c0,#a06080)','linear-gradient(135deg,#a0b8d0,#607090)'];
+  const colorPor = id => colores[id?.charCodeAt?.(id.length-1) % colores.length || 0];
+
+  function avEl(usuario, size=38) {
+    const bg = colorPor(usuario?._id);
+    if (usuario?.avatar)
+      return `<div style="width:${size}px;height:${size}px;border-radius:50%;overflow:hidden;"><img src="${usuario.avatar}" style="width:100%;height:100%;object-fit:cover;" alt=""/></div>`;
+    return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-weight:600;color:white;font-size:${size*.32}px;">${iniciales(usuario?.nombre)}</div>`;
+  }
+
+  async function cargarConversaciones() {
+    try {
+      const convs = await obtenerConversaciones();
+      const div   = document.getElementById('convs');
+      if (!convs.length) {
+        div.innerHTML = '<div style="padding:20px 16px;font-size:0.82rem;color:var(--gray-text)">Sin conversaciones aún</div>';
+        return;
+      }
+      div.innerHTML = convs.map(c => `
+        <div class="conv-item ${conActual?._id===c.usuario._id?'active':''}"
+          onclick='abrirChat(${JSON.stringify(c.usuario)})'>
+          ${avEl(c.usuario, 40)}
+          <div style="flex:1;overflow:hidden;">
+            <div class="conv-nombre">${c.usuario.nombre}</div>
+            <div class="conv-preview">${c.ultimoMensaje||''}</div>
+          </div>
+          ${c.noLeidos ? `<span class="conv-badge">${c.noLeidos}</span>` : ''}
+        </div>`).join('');
+    } catch {}
+  }
+
+  async function abrirChat(usuario) {
+    conActual = usuario;
+    clearInterval(interval);
+    document.getElementById('empty-chat').style.display   = 'none';
+    const ca = document.getElementById('chat-activo');
+    ca.style.display    = 'flex';
+    ca.style.flexDirection = 'column';
+    ca.style.flex       = '1';
+    ca.style.overflow   = 'hidden';
+
+    document.getElementById('chat-header').innerHTML = `
+      ${avEl(usuario, 38)}
+      <div>
+        <div class="chat-header-nombre">${usuario.nombre}</div>
+        <div class="chat-header-sub">${usuario.tipoUsuario==='empresa'?'Empresa':'Candidata'}</div>
+      </div>
+      <div style="margin-left:auto">
+        <a href="profile.html?id=${usuario._id}" style="font-size:0.8rem;color:var(--gray-text)">Ver perfil →</a>
+      </div>`;
+
+    await cargarMensajes();
+    interval = setInterval(cargarMensajes, 3000);
+    cargarConversaciones();
+  }
+
+  async function cargarMensajes() {
+    if (!conActual) return;
+    try {
+      const msgs = await obtenerMensajes(conActual._id);
+      const div  = document.getElementById('mensajes');
+      const wasBottom = div.scrollTop + div.clientHeight >= div.scrollHeight - 10;
+
+      div.innerHTML = msgs.map(m => {
+        const mio  = m.emisorId?._id === sesion?.id || m.emisorId === sesion?.id;
+        const hora = new Date(m.createdAt).toLocaleTimeString('es-CO', { hour:'2-digit', minute:'2-digit' });
+        const emisor = mio ? sesion : conActual;
+        return `
+          <div class="msg ${mio?'mio':'otro'}">
+            ${!mio ? `<div class="msg-av" style="background:${colorPor(conActual._id)}">${iniciales(conActual.nombre)}</div>` : ''}
+            <div>
+              <div class="msg-burbuja">${m.texto}</div>
+              <div class="msg-hora" style="text-align:${mio?'right':'left'}">${hora}</div>
+            </div>
+          </div>`;
+      }).join('');
+
+      if (wasBottom) div.scrollTop = div.scrollHeight;
+    } catch {}
+  }
+
+  async function enviar() {
+    if (!conActual) return;
+    const txt  = document.getElementById('txt-msg').value.trim();
+    if (!txt) return;
+    document.getElementById('txt-msg').value = '';
+    try {
+      await enviarMensaje(conActual._id, txt);
+      await cargarMensajes();
+      cargarConversaciones();
+    } catch (err) { alert('Error: ' + err.message); }
+  }
+
+  // Auto-abrir si viene con ?con=
+  async function init() {
+    await cargarConversaciones();
+    if (conParam) {
+      try {
+        const perfil = await obtenerPerfil(conParam);
+        abrirChat(perfil);
+      } catch {}
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

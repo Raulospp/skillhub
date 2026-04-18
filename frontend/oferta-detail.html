@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Detalle de oferta</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    body { background: #f5f4f1; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 36px 24px 80px; display: grid; grid-template-columns: 1fr 300px; gap: 24px; }
+    @media(max-width:700px){ .wrap{ grid-template-columns:1fr; } }
+
+    .card { background: var(--white); border-radius: 16px; padding: 28px; margin-bottom: 20px; }
+    .oferta-titulo { font-family: var(--font-display); font-size: 1.6rem; color: var(--black); margin-bottom: 12px; }
+    .empresa-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .empresa-av { width: 48px; height: 48px; border-radius: 10px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 600; color: white; font-size: 1rem; }
+    .empresa-nombre { font-size: 0.95rem; font-weight: 600; color: var(--black); }
+    .empresa-sector { font-size: 0.8rem; color: var(--gray-text); }
+
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .meta-item { background: #f5f4f1; border-radius: 10px; padding: 12px 14px; }
+    .meta-label { font-size: 0.72rem; color: var(--gray-text); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
+    .meta-val   { font-size: 0.88rem; font-weight: 500; color: var(--black); }
+
+    .sec-title { font-size: 0.82rem; font-weight: 600; color: var(--black); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; }
+    .desc-text { font-size: 0.88rem; color: #444; line-height: 1.75; white-space: pre-wrap; }
+
+    /* Panel lateral */
+    .side-card { background: var(--white); border-radius: 16px; padding: 24px; position: sticky; top: 80px; }
+    .btn-postular {
+      width: 100%; background: var(--black); color: white; border: none; border-radius: 10px;
+      padding: 14px; font-family: var(--font-body); font-size: 0.9rem; font-weight: 500;
+      cursor: pointer; transition: background 0.2s; margin-bottom: 10px;
+    }
+    .btn-postular:hover { background: #2a2a2a; }
+    .btn-postular:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-mensaje {
+      width: 100%; background: transparent; color: var(--black); border: 1.5px solid var(--gray-mid);
+      border-radius: 10px; padding: 12px; font-family: var(--font-body); font-size: 0.88rem;
+      cursor: pointer; transition: border-color 0.2s; margin-bottom: 16px; text-decoration: none;
+      display: block; text-align: center;
+    }
+    .btn-mensaje:hover { border-color: var(--black); }
+
+    .estado-badge {
+      display: inline-block; font-size: 0.78rem; padding: 4px 12px; border-radius: 20px; font-weight: 500;
+    }
+    .estado-pendiente  { background: #FAEEDA; color: #633806; }
+    .estado-revisando  { background: #E6F1FB; color: #0C447C; }
+    .estado-aceptada   { background: #EAF3DE; color: #3B6D11; }
+    .estado-rechazada  { background: #FCEBEB; color: #A32D2D; }
+
+    /* Modal postulación */
+    .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:200; align-items:center; justify-content:center; }
+    .modal-bg.open { display:flex; }
+    .modal { background:var(--white); border-radius:16px; padding:32px; width:420px; max-width:90vw; }
+    .modal h3 { font-size:1.1rem; font-weight:600; margin-bottom:12px; color:var(--black); }
+    .modal textarea { width:100%; border:1.5px solid var(--gray-mid); border-radius:10px; padding:12px; font-family:var(--font-body); font-size:0.85rem; resize:vertical; min-height:100px; outline:none; margin-bottom:14px; }
+    .modal-btns { display:flex; gap:10px; }
+    .modal-cancel { flex:1; background:transparent; border:1.5px solid var(--gray-mid); border-radius:8px; padding:10px; font-family:var(--font-body); cursor:pointer; }
+    .modal-ok { flex:2; background:var(--black); color:white; border:none; border-radius:8px; padding:10px; font-family:var(--font-body); font-weight:500; cursor:pointer; }
+
+    /* Candidatas postuladas (vista empresa) */
+    .candidata-card { display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid #f0ede8; }
+    .candidata-card:last-child { border-bottom:none; }
+    .candidata-av { width:44px; height:44px; border-radius:50%; overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:600; color:white; }
+    .candidata-info { flex:1; }
+    .candidata-nombre { font-size:0.88rem; font-weight:600; color:var(--black); }
+    .candidata-sub    { font-size:0.78rem; color:var(--gray-text); }
+    .estado-select { font-size:0.8rem; border:1px solid var(--gray-mid); border-radius:6px; padding:4px 8px; font-family:var(--font-body); cursor:pointer; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="explore.html" class="navbar-logo">
+    <svg width="24" height="24" viewBox="0 0 52 52" fill="none"><rect width="52" height="52" rx="14" fill="#111"/><text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text></svg>
+    SkillHub
+  </a>
+  <div class="navbar-spacer"></div>
+  <a href="profile.html" class="btn-nav">Mi perfil</a>
+  <a href="profile.html" class="avatar-btn">
+    <div class="avatar-inner" id="nav-avatar">SV</div>
+  </a>
+</nav>
+
+<div class="wrap">
+  <!-- Columna principal -->
+  <div>
+    <div id="loading" style="color:var(--gray-text);font-size:0.85rem;padding:40px 0">Cargando oferta...</div>
+    <div id="oferta-content" style="display:none">
+
+      <div class="card">
+        <div class="oferta-titulo" id="o-titulo">—</div>
+        <div class="empresa-row">
+          <div class="empresa-av" id="o-empresa-av" style="background:linear-gradient(135deg,#c8b8a2,#a08060)">E</div>
+          <div>
+            <div class="empresa-nombre" id="o-empresa-nombre">—</div>
+            <div class="empresa-sector"  id="o-empresa-sector">—</div>
+          </div>
+        </div>
+
+        <div class="meta-grid">
+          <div class="meta-item"><div class="meta-label">Ciudad</div><div class="meta-val" id="o-ciudad">—</div></div>
+          <div class="meta-item"><div class="meta-label">Modalidad</div><div class="meta-val" id="o-modalidad">—</div></div>
+          <div class="meta-item"><div class="meta-label">Salario</div><div class="meta-val" id="o-salario">—</div></div>
+          <div class="meta-item"><div class="meta-label">Dirigida a</div><div class="meta-val" id="o-dirigido">—</div></div>
+        </div>
+
+        <div class="sec-title">Descripción</div>
+        <div class="desc-text" id="o-descripcion">—</div>
+
+        <div id="requisitos-section" style="display:none;margin-top:20px">
+          <div class="sec-title">Requisitos</div>
+          <div class="desc-text" id="o-requisitos">—</div>
+        </div>
+      </div>
+
+      <!-- Candidatas que aplicaron (solo empresa) -->
+      <div class="card" id="postuladas-section" style="display:none">
+        <div class="sec-title">Candidatas postuladas <span id="postuladas-count"></span></div>
+        <div id="postuladas-lista"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Panel lateral -->
+  <div>
+    <div class="side-card" id="side-panel">
+      <div id="lado-candidata">
+        <button class="btn-postular" id="btn-postular" onclick="abrirModal()">Postularme</button>
+        <a class="btn-mensaje" id="btn-chat" href="#">Enviar mensaje</a>
+        <div id="mi-estado" style="display:none;text-align:center;margin-top:4px">
+          <div style="font-size:0.78rem;color:var(--gray-text);margin-bottom:4px">Tu postulación</div>
+          <span class="estado-badge estado-pendiente" id="estado-label">pendiente</span>
+        </div>
+      </div>
+      <div id="lado-empresa" style="display:none">
+        <div style="font-size:0.82rem;font-weight:500;color:var(--black);margin-bottom:8px">Esta es tu oferta</div>
+        <a href="mis-ofertas.html" style="display:block;text-align:center;font-size:0.83rem;color:var(--gray-text);margin-bottom:10px">Ver todas mis ofertas</a>
+        <button onclick="cambiarEstadoOferta('cerrada')"
+          style="width:100%;background:transparent;border:1.5px solid #f09595;border-radius:10px;padding:10px;font-family:var(--font-body);color:#A32D2D;cursor:pointer;font-size:0.83rem;">
+          Cerrar oferta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal postulación -->
+<div class="modal-bg" id="modal-post">
+  <div class="modal">
+    <h3>Postularme a esta oferta</h3>
+    <textarea id="msg-post" placeholder="Escribe un mensaje opcional para la empresa (por qué eres la candidata ideal, tu experiencia, etc.)"></textarea>
+    <p class="error-msg" id="error-post"></p>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="document.getElementById('modal-post').classList.remove('open')">Cancelar</button>
+      <button class="modal-ok" id="btn-confirmar" onclick="confirmarPostulacion()">Enviar postulación</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  requireAuth();
+  const sesion = getUsuario();
+  if (sesion) document.getElementById('nav-avatar').textContent = iniciales(sesion.nombre);
+
+  const params   = new URLSearchParams(window.location.search);
+  const ofertaId = params.get('id');
+  if (!ofertaId) window.location.href = 'explore.html';
+
+  let oferta = null;
+
+  async function cargar() {
+    try {
+      oferta = await obtenerOferta(ofertaId);
+      const emp = oferta.empresaId || {};
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('oferta-content').style.display = 'block';
+
+      document.getElementById('o-titulo').textContent    = oferta.titulo;
+      document.getElementById('o-ciudad').textContent    = oferta.ciudad    || 'No especificada';
+      document.getElementById('o-modalidad').textContent = oferta.modalidad || 'Presencial';
+      document.getElementById('o-salario').textContent   = oferta.salario   || 'A convenir';
+      document.getElementById('o-dirigido').textContent  = oferta.dirigidoA === 'todas' ? 'Todas las candidatas' : oferta.dirigidoA;
+      document.getElementById('o-descripcion').textContent = oferta.descripcion;
+
+      if (oferta.requisitos) {
+        document.getElementById('requisitos-section').style.display = 'block';
+        document.getElementById('o-requisitos').textContent = oferta.requisitos;
+      }
+
+      // Empresa
+      document.getElementById('o-empresa-nombre').textContent = emp.nombreEmpresa || emp.nombre || '—';
+      document.getElementById('o-empresa-sector').textContent = emp.sectorEmpresa  || emp.ciudad || '';
+      if (emp.avatar) {
+        document.getElementById('o-empresa-av').innerHTML =
+          `<img src="${emp.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" alt=""/>`;
+      } else {
+        document.getElementById('o-empresa-av').textContent = (emp.nombreEmpresa||emp.nombre||'E')[0];
+      }
+
+      const esEmpresa   = sesion?.tipoUsuario === 'empresa';
+      const esPropietaria = emp._id === sesion?.id || oferta.empresaId?._id === sesion?.id;
+
+      if (esPropietaria) {
+        // Vista empresa: ver candidatas
+        document.getElementById('lado-candidata').style.display = 'none';
+        document.getElementById('lado-empresa').style.display   = 'block';
+        cargarPostuladas();
+      } else {
+        // Vista candidata
+        document.getElementById('btn-chat').href = `chat.html?con=${emp._id}`;
+        verificarMiPostulacion();
+      }
+
+    } catch (err) {
+      document.getElementById('loading').textContent = 'Error: ' + err.message;
+    }
+  }
+
+  async function verificarMiPostulacion() {
+    try {
+      const posts = await obtenerPostulaciones({ candidataId: sesion.id });
+      const mia   = posts.find(p => p.ofertaId?._id === ofertaId || p.ofertaId === ofertaId);
+      if (mia) {
+        document.getElementById('btn-postular').disabled   = true;
+        document.getElementById('btn-postular').textContent = 'Ya te postulaste';
+        document.getElementById('mi-estado').style.display  = 'block';
+        const lbl = document.getElementById('estado-label');
+        lbl.textContent = mia.estado;
+        lbl.className   = `estado-badge estado-${mia.estado}`;
+      }
+    } catch {}
+  }
+
+  async function cargarPostuladas() {
+    try {
+      const posts = await obtenerPostulaciones({ ofertaId });
+      document.getElementById('postuladas-section').style.display = 'block';
+      document.getElementById('postuladas-count').textContent = `(${posts.length})`;
+
+      if (!posts.length) {
+        document.getElementById('postuladas-lista').innerHTML =
+          '<p style="font-size:0.85rem;color:var(--gray-text)">Nadie se ha postulado aún</p>';
+        return;
+      }
+
+      const colores = ['linear-gradient(135deg,#c8b8a2,#a08060)','linear-gradient(135deg,#a0c8a0,#608060)',
+        'linear-gradient(135deg,#d0a0c0,#a06080)','linear-gradient(135deg,#a0b8d0,#607090)'];
+
+      document.getElementById('postuladas-lista').innerHTML = posts.map((p,i) => {
+        const c = p.candidataId || {};
+        const av = c.avatar
+          ? `<img src="${c.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt=""/>`
+          : iniciales(c.nombre||'?');
+        return `
+          <div class="candidata-card">
+            <div class="candidata-av" style="background:${colores[i%colores.length]}">${av}</div>
+            <div class="candidata-info">
+              <a href="profile.html?id=${c._id}" class="candidata-nombre" style="text-decoration:none;color:var(--black)">${c.nombre||'—'}</a>
+              <div class="candidata-sub">${c.rol||''} · ${c.ciudad||''}</div>
+              ${p.mensaje ? `<div style="font-size:0.78rem;color:#555;margin-top:3px;font-style:italic">"${p.mensaje.slice(0,80)}${p.mensaje.length>80?'…':''}"</div>` : ''}
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+              <select class="estado-select" onchange="cambiarEstadoPost('${p._id}',this.value)">
+                <option value="pendiente"  ${p.estado==='pendiente'  ?'selected':''}>Pendiente</option>
+                <option value="revisando"  ${p.estado==='revisando'  ?'selected':''}>Revisando</option>
+                <option value="aceptada"   ${p.estado==='aceptada'   ?'selected':''}>Aceptada</option>
+                <option value="rechazada"  ${p.estado==='rechazada'  ?'selected':''}>Rechazada</option>
+              </select>
+              <a href="chat.html?con=${c._id}" style="font-size:0.75rem;color:var(--gray-text)">Chatear →</a>
+            </div>
+          </div>`;
+      }).join('');
+    } catch (err) {
+      document.getElementById('postuladas-lista').innerHTML = 'Error: ' + err.message;
+    }
+  }
+
+  function abrirModal() {
+    document.getElementById('modal-post').classList.add('open');
+  }
+
+  async function confirmarPostulacion() {
+    const mensaje = document.getElementById('msg-post').value.trim();
+    const btn     = document.getElementById('btn-confirmar');
+    ocultarError('error-post');
+    setBtnLoading(btn, true, 'Enviar postulación');
+    try {
+      await postularme(ofertaId, mensaje);
+      document.getElementById('modal-post').classList.remove('open');
+      document.getElementById('btn-postular').disabled    = true;
+      document.getElementById('btn-postular').textContent = 'Ya te postulaste';
+      document.getElementById('mi-estado').style.display  = 'block';
+    } catch (err) {
+      mostrarError('error-post', err.message);
+    } finally {
+      setBtnLoading(btn, false, 'Enviar postulación');
+    }
+  }
+
+  async function cambiarEstadoPost(postId, estado) {
+    try { await cambiarEstadoPostulacion(postId, estado); }
+    catch (err) { alert('Error: ' + err.message); }
+  }
+
+  async function cambiarEstadoOferta(estado) {
+    if (!confirm('¿Cerrar esta oferta?')) return;
+    try {
+      await actualizarOferta(ofertaId, { estado });
+      alert('Oferta cerrada');
+      window.location.href = 'explore.html';
+    } catch (err) { alert('Error: ' + err.message); }
+  }
+
+  cargar();
+</script>
+</body>
+</html>

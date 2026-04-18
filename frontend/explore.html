@@ -8,204 +8,286 @@
   <link rel="stylesheet" href="css/styles.css"/>
   <style>
     body { background: #f5f4f1; }
-    .category-bar {
-      background: var(--white);
+    .top-bar { background: var(--white); border-bottom: 1px solid #e0ddd8; }
+    .tabs-row {
+      display: flex; gap: 0; padding: 0 32px;
       border-bottom: 1px solid #e0ddd8;
-      padding: 12px 32px;
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
     }
-    .profile-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-      padding: 32px;
-      max-width: 1200px;
-      margin: 0 auto;
+    .tab-btn {
+      padding: 14px 20px; font-family: var(--font-body); font-size: 0.85rem;
+      font-weight: 500; color: var(--gray-text); border: none; background: none;
+      cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
     }
-    .pcard-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-    .pcard-name { font-size: 0.92rem; font-weight: 600; color: var(--black); }
-    .pcard-role { font-size: 0.78rem; color: var(--gray-text); margin-top: 2px; }
-    .pcard-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-    .pcard-skills { font-size: 0.8rem; color: #444; line-height: 1.6; }
-    .pcard-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid #f0ede8;
+    .tab-btn:hover { color: var(--black); }
+    .tab-btn.active { color: var(--black); border-bottom-color: var(--black); }
+
+    .filters-row {
+      padding: 12px 32px; display: flex; gap: 8px; overflow-x: auto; align-items: center;
     }
-    .pcard-rating { font-size: 0.78rem; color: var(--gray-text); }
-    .empty-state {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 80px 32px;
-      color: var(--gray-text);
-      text-align: center;
-    }
-    .skeleton {
-      background: linear-gradient(90deg, #f0ede8 25%, #e8e5e0 50%, #f0ede8 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-      border-radius: 8px;
-      height: 16px;
-      margin-bottom: 8px;
-    }
-    @keyframes shimmer { to { background-position: -200% 0; } }
+    .chip { background:#f0ede8; border:1.5px solid transparent; border-radius:20px; padding:6px 14px; font-family:var(--font-body); font-size:0.8rem; color:var(--gray-text); cursor:pointer; white-space:nowrap; transition:all .15s; }
+    .chip:hover { border-color:var(--gray-mid); color:var(--black); }
+    .chip.active { background:var(--black); color:white; border-color:var(--black); }
+
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; padding:28px 32px; max-width:1200px; margin:0 auto; }
+
+    .pcard { background:var(--white); border-radius:14px; padding:22px; cursor:pointer; transition:box-shadow .2s,transform .2s; border:1.5px solid transparent; display:block; text-decoration:none; }
+    .pcard:hover { box-shadow:0 6px 28px rgba(0,0,0,.10); transform:translateY(-2px); border-color:#e0ddd8; }
+
+    .pcard-head { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .pcard-av { width:46px; height:46px; border-radius:50%; flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-weight:600; color:white; font-size:0.95rem; }
+    .pcard-name { font-size:0.92rem; font-weight:600; color:var(--black); }
+    .pcard-sub  { font-size:0.78rem; color:var(--gray-text); margin-top:2px; }
+    .pcard-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+    .pcard-tag  { font-size:0.72rem; background:#f0ede8; color:var(--gray-text); border-radius:20px; padding:3px 10px; }
+    .tag-candidata { background:#EEEDFE; color:#3C3489; }
+    .tag-empresa   { background:#E1F5EE; color:#085041; }
+    .tag-mujer     { background:#FBEAF0; color:#72243E; }
+    .tag-joven     { background:#FAEEDA; color:#633806; }
+    .pcard-skills  { font-size:0.8rem; color:#444; line-height:1.6; margin-bottom:10px; }
+    .pcard-foot { display:flex; justify-content:space-between; align-items:center; padding-top:10px; border-top:1px solid #f0ede8; }
+    .pcard-rating { font-size:0.78rem; color:var(--gray-text); }
+    .pcard-badge  { font-size:0.72rem; background:#f0ede8; border-radius:20px; padding:3px 10px; color:var(--black); }
+
+    /* Tarjeta oferta */
+    .ocard { background:var(--white); border-radius:14px; padding:22px; cursor:pointer; transition:box-shadow .2s,transform .2s; border:1.5px solid transparent; text-decoration:none; display:block; }
+    .ocard:hover { box-shadow:0 6px 28px rgba(0,0,0,.10); transform:translateY(-2px); border-color:#e0ddd8; }
+    .ocard-title { font-size:0.95rem; font-weight:600; color:var(--black); margin-bottom:6px; }
+    .ocard-empresa { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+    .ocard-av { width:32px; height:32px; border-radius:8px; flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600; color:white; }
+    .ocard-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+    .tag-modal { background:#E6F1FB; color:#185FA5; }
+    .tag-dirigido { background:#FBEAF0; color:#72243E; }
+    .ocard-desc { font-size:0.82rem; color:#555; line-height:1.55; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:10px; }
+    .ocard-foot { display:flex; justify-content:space-between; align-items:center; padding-top:10px; border-top:1px solid #f0ede8; font-size:0.78rem; color:var(--gray-text); }
+
+    .empty { display:none; flex-direction:column; align-items:center; justify-content:center; padding:80px 32px; color:var(--gray-text); text-align:center; }
+    .skel { background:linear-gradient(90deg,#f0ede8 25%,#e8e5e0 50%,#f0ede8 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:8px; height:16px; margin-bottom:8px; }
+    @keyframes shimmer { to { background-position:-200% 0; } }
+
+    @media(max-width:600px){ .grid{ padding:16px; } .filters-row{ padding:10px 16px; } }
   </style>
 </head>
 <body>
 
 <nav class="navbar">
   <a href="home.html" class="navbar-logo">
-    <svg width="24" height="24" viewBox="0 0 52 52" fill="none">
-      <rect width="52" height="52" rx="14" fill="#111"/>
-      <text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text>
-    </svg>
+    <svg width="24" height="24" viewBox="0 0 52 52" fill="none"><rect width="52" height="52" rx="14" fill="#111"/><text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text></svg>
     SkillHub
   </a>
-  <input id="search-input" type="text" class="navbar-search" placeholder="Buscar por nombre o habilidad..."
-    oninput="filtrarLocal(this.value)"/>
-  <button style="background:transparent;border:1.5px solid var(--gray-mid);border-radius:8px;padding:8px 14px;cursor:pointer;font-family:var(--font-body);font-size:0.82rem;color:var(--black);">
-    ⚙ Filtros
-  </button>
+  <input id="search-input" type="text" class="navbar-search" placeholder="Buscar por nombre, habilidad u oferta..."
+    oninput="buscarLocal(this.value)"/>
   <div class="navbar-spacer"></div>
-  <a href="profile.html" class="btn-nav">Perfil profesional</a>
+  <a href="profile.html" class="btn-nav">Mi perfil</a>
   <a href="profile.html" class="avatar-btn">
     <div class="avatar-inner" id="nav-avatar">SV</div>
   </a>
 </nav>
 
-<!-- Chips de categorías -->
-<div class="category-bar">
-  <button class="chip active" onclick="filtrarPorCategoria(this, '')">Todos</button>
-  <button class="chip" onclick="filtrarPorCategoria(this, 'Tecnología')">Tecnología</button>
-  <button class="chip" onclick="filtrarPorCategoria(this, 'Diseño')">Diseño</button>
-  <button class="chip" onclick="filtrarPorCategoria(this, 'Bienestar')">Bienestar</button>
-  <button class="chip" onclick="filtrarPorCategoria(this, 'Finanzas')">Finanzas</button>
-  <button class="chip" onclick="filtrarPorCategoria(this, 'Idiomas')">Idiomas</button>
-  <button class="chip" onclick="filtrarPorCategoria(this, 'Marketing')">Marketing</button>
+<div class="top-bar">
+  <!-- Tabs principales -->
+  <div class="tabs-row">
+    <button class="tab-btn active" id="tab-perfiles" onclick="cambiarTab('perfiles')">Candidatas</button>
+    <button class="tab-btn"        id="tab-ofertas"  onclick="cambiarTab('ofertas')">Ofertas de trabajo</button>
+  </div>
+
+  <!-- Filtros candidatas -->
+  <div class="filters-row" id="filtros-perfiles">
+    <button class="chip active" onclick="filtrarGenero(this,'')">Todas</button>
+    <button class="chip"        onclick="filtrarGenero(this,'mujer')">Mujeres</button>
+    <button class="chip"        onclick="filtrarGenero(this,'joven')">Jóvenes</button>
+    <span style="width:1px;height:20px;background:var(--gray-mid);flex-shrink:0;margin:0 4px"></span>
+    <button class="chip" id="chip-cat-todas"  onclick="filtrarCategoria(this,'')">Todas las áreas</button>
+    <button class="chip" onclick="filtrarCategoria(this,'Tecnología')">Tecnología</button>
+    <button class="chip" onclick="filtrarCategoria(this,'Diseño')">Diseño</button>
+    <button class="chip" onclick="filtrarCategoria(this,'Bienestar')">Bienestar</button>
+    <button class="chip" onclick="filtrarCategoria(this,'Finanzas')">Finanzas</button>
+    <button class="chip" onclick="filtrarCategoria(this,'Idiomas')">Idiomas</button>
+    <button class="chip" onclick="filtrarCategoria(this,'Marketing')">Marketing</button>
+  </div>
+
+  <!-- Filtros ofertas -->
+  <div class="filters-row" id="filtros-ofertas" style="display:none">
+    <button class="chip active" onclick="filtrarDirigido(this,'todas')">Todas</button>
+    <button class="chip"        onclick="filtrarDirigido(this,'mujeres')">Para mujeres</button>
+    <button class="chip"        onclick="filtrarDirigido(this,'jovenes')">Para jóvenes</button>
+    <span style="width:1px;height:20px;background:var(--gray-mid);flex-shrink:0;margin:0 4px"></span>
+    <button class="chip" onclick="filtrarModalidad(this,'')">Todas las modalidades</button>
+    <button class="chip" onclick="filtrarModalidad(this,'Remoto')">Remoto</button>
+    <button class="chip" onclick="filtrarModalidad(this,'Presencial')">Presencial</button>
+    <button class="chip" onclick="filtrarModalidad(this,'Híbrido')">Híbrido</button>
+  </div>
 </div>
 
-<div class="profile-grid" id="profile-grid"></div>
-
-<div class="empty-state" id="empty-state">
-  <div style="font-size:2rem;margin-bottom:12px;">🔍</div>
-  <div style="font-size:1rem;font-weight:500;color:var(--black);margin-bottom:6px;">Sin resultados</div>
-  <div style="font-size:0.85rem;">Prueba con otro término o categoría</div>
+<div class="grid" id="grid"></div>
+<div class="empty" id="empty">
+  <div style="font-size:2rem;margin-bottom:12px">🔍</div>
+  <div style="font-size:1rem;font-weight:500;color:var(--black);margin-bottom:6px">Sin resultados</div>
+  <div style="font-size:0.85rem">Intenta con otros filtros</div>
 </div>
 
 <script src="js/api.js"></script>
 <script>
   requireAuth();
+  const sesion = getUsuario();
+  if (sesion) document.getElementById('nav-avatar').textContent = iniciales(sesion.nombre);
 
-  const usuario = getUsuario();
-  if (usuario) document.getElementById('nav-avatar').textContent = iniciales(usuario.nombre);
+  let tabActual    = 'perfiles';
+  let todosItems   = [];
+  let filtros      = { genero: '', categoria: '', dirigidoA: '', modalidad: '' };
 
-  let todosLosUsuarios = [];
-  let categoriaActiva = '';
+  const colores = ['linear-gradient(135deg,#c8b090,#a07050)','linear-gradient(135deg,#8090a0,#506070)',
+    'linear-gradient(135deg,#c8b8a2,#a08060)','linear-gradient(135deg,#a0c8a0,#608060)',
+    'linear-gradient(135deg,#d0a0c0,#a06080)','linear-gradient(135deg,#a0b8d0,#607090)',
+    'linear-gradient(135deg,#c0d0a0,#809060)','linear-gradient(135deg,#b0a0d0,#706090)'];
+  const colorPor = i => colores[i % colores.length];
 
-  // Colores para avatares
-  const colores = [
-    'linear-gradient(135deg,#c8b090,#a07050)',
-    'linear-gradient(135deg,#8090a0,#506070)',
-    'linear-gradient(135deg,#c8b8a2,#a08060)',
-    'linear-gradient(135deg,#a0c8a0,#608060)',
-    'linear-gradient(135deg,#d0a0c0,#a06080)',
-    'linear-gradient(135deg,#a0b8d0,#607090)',
-    'linear-gradient(135deg,#c0d0a0,#809060)',
-    'linear-gradient(135deg,#b0a0d0,#706090)',
-  ];
-
-  function colorPorIndice(i) {
-    return colores[i % colores.length];
-  }
-
-  function renderCard(u, index) {
-    const servicios = u.serviciosOfrece || [];
-    const cats = [...new Set(servicios.map(s => s.categoria).filter(Boolean))];
-    const habilidades = servicios.map(s => s.titulo).slice(0, 3).join(' · ') || 'Sin servicios aún';
-    const esPropio = usuario && u._id === usuario.id;
-
-    return `
-      <a class="pcard" href="${esPropio ? 'profile.html' : 'profile.html?id=' + u._id}">
-        <div class="pcard-header">
-          <div class="pcard-avatar" style="background:${colorPorIndice(index)}">${iniciales(u.nombre)}</div>
-          <div>
-            <div class="pcard-name">${u.nombre}</div>
-            <div class="pcard-role">${u.rol || 'Miembro'} · ${u.ciudad || 'Colombia'}</div>
-          </div>
-        </div>
-        <div class="pcard-tags">
-          ${cats.slice(0,3).map(c => `<span class="pcard-tag">${c}</span>`).join('')}
-        </div>
-        <div class="pcard-skills">${habilidades}</div>
-        <div class="pcard-footer">
-          <span class="pcard-rating">⭐ ${u.valoracion?.toFixed(1) || '—'}</span>
-          <span class="pcard-hours">${u.horasAportadas || 0} h compartidas</span>
-        </div>
-      </a>`;
-  }
-
-  function renderSkeletons() {
-    const grid = document.getElementById('profile-grid');
-    grid.innerHTML = Array(6).fill(`
+  function skeletons() {
+    document.getElementById('grid').innerHTML = Array(6).fill(`
       <div class="pcard" style="pointer-events:none">
         <div style="display:flex;gap:12px;margin-bottom:14px;">
-          <div class="skeleton" style="width:46px;height:46px;border-radius:50%;flex-shrink:0;"></div>
-          <div style="flex:1"><div class="skeleton" style="width:60%"></div><div class="skeleton" style="width:40%"></div></div>
+          <div class="skel" style="width:46px;height:46px;border-radius:50%;flex-shrink:0;margin-bottom:0"></div>
+          <div style="flex:1"><div class="skel" style="width:60%"></div><div class="skel" style="width:40%"></div></div>
         </div>
-        <div class="skeleton"></div>
-        <div class="skeleton" style="width:70%"></div>
+        <div class="skel"></div><div class="skel" style="width:70%"></div>
       </div>`).join('');
+    document.getElementById('empty').style.display = 'none';
   }
 
-  function renderGrid(usuarios) {
-    const grid = document.getElementById('profile-grid');
-    const empty = document.getElementById('empty-state');
-    if (!usuarios.length) {
-      grid.innerHTML = '';
-      empty.style.display = 'flex';
-      return;
-    }
+  function renderPerfil(u, i) {
+    const tags = [...new Set((u.serviciosOfrece||[]).map(s=>s.categoria).filter(Boolean))].slice(0,2);
+    const skills = (u.serviciosOfrece||[]).map(s=>s.titulo).slice(0,3).join(' · ') || 'Sin servicios publicados';
+    const esPropio = u._id === sesion?.id;
+    const av = u.avatar
+      ? `<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt=""/>`
+      : iniciales(u.nombre);
+
+    return `<a class="pcard" href="profile.html${esPropio ? '' : '?id='+u._id}">
+      <div class="pcard-head">
+        <div class="pcard-av" style="background:${colorPor(i)}">${av}</div>
+        <div>
+          <div class="pcard-name">${u.nombre}</div>
+          <div class="pcard-sub">${u.rol||'Candidata'} · ${u.ciudad||'Colombia'}</div>
+        </div>
+      </div>
+      <div class="pcard-tags">
+        <span class="pcard-tag tag-candidata">Candidata</span>
+        ${u.genero==='mujer'  ? '<span class="pcard-tag tag-mujer">Mujer</span>'  : ''}
+        ${u.genero==='joven'  ? '<span class="pcard-tag tag-joven">Joven</span>'  : ''}
+        ${tags.map(t=>`<span class="pcard-tag">${t}</span>`).join('')}
+      </div>
+      <div class="pcard-skills">${skills}</div>
+      <div class="pcard-foot">
+        <span class="pcard-rating">⭐ ${u.valoracion?.toFixed(1)||'—'}</span>
+        <span class="pcard-badge">${u.horasAportadas||0} h aportadas</span>
+      </div>
+    </a>`;
+  }
+
+  function renderOferta(o, i) {
+    const emp = o.empresaId || {};
+    const av  = emp.avatar
+      ? `<img src="${emp.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" alt=""/>`
+      : (emp.nombre||'E')[0].toUpperCase();
+
+    return `<a class="ocard" href="oferta-detail.html?id=${o._id}">
+      <div class="ocard-title">${o.titulo}</div>
+      <div class="ocard-empresa">
+        <div class="ocard-av" style="background:${colorPor(i)}">${av}</div>
+        <div>
+          <div style="font-size:0.82rem;font-weight:500;color:var(--black)">${emp.nombreEmpresa||emp.nombre||'Empresa'}</div>
+          <div style="font-size:0.75rem;color:var(--gray-text)">${o.ciudad||''}</div>
+        </div>
+      </div>
+      <div class="ocard-tags">
+        <span class="pcard-tag tag-modal">${o.modalidad||'Presencial'}</span>
+        ${o.categoria ? `<span class="pcard-tag">${o.categoria}</span>` : ''}
+        ${o.dirigidoA&&o.dirigidoA!=='todas' ? `<span class="pcard-tag tag-dirigido">Para ${o.dirigidoA}</span>` : ''}
+      </div>
+      <div class="ocard-desc">${o.descripcion||''}</div>
+      <div class="ocard-foot">
+        <span>${o.salario ? '💰 '+o.salario : 'Salario a convenir'}</span>
+        <span>${o.fechaLimite ? 'Hasta '+new Date(o.fechaLimite).toLocaleDateString('es-CO') : ''}</span>
+      </div>
+    </a>`;
+  }
+
+  function renderGrid(items) {
+    const grid  = document.getElementById('grid');
+    const empty = document.getElementById('empty');
+    if (!items.length) { grid.innerHTML = ''; empty.style.display = 'flex'; return; }
     empty.style.display = 'none';
-    grid.innerHTML = usuarios.map((u, i) => renderCard(u, i)).join('');
+    grid.innerHTML = items.map((item,i) =>
+      tabActual === 'perfiles' ? renderPerfil(item,i) : renderOferta(item,i)
+    ).join('');
   }
 
-  async function cargarUsuarios(categoria) {
-    renderSkeletons();
+  async function cargar() {
+    skeletons();
     try {
-      todosLosUsuarios = await listarUsuarios(categoria || undefined);
-      renderGrid(todosLosUsuarios);
+      if (tabActual === 'perfiles') {
+        todosItems = await listarUsuarios({
+          tipoUsuario: 'candidata',
+          genero:      filtros.genero,
+          categoria:   filtros.categoria,
+        });
+      } else {
+        todosItems = await listarOfertas({
+          dirigidoA: filtros.dirigidoA,
+          modalidad: filtros.modalidad,
+        });
+      }
+      renderGrid(todosItems);
     } catch (e) {
-      document.getElementById('profile-grid').innerHTML =
-        `<p style="color:var(--gray-text);font-size:0.85rem;padding:32px;">No se pudieron cargar los perfiles. ¿Está corriendo el backend?</p>`;
+      document.getElementById('grid').innerHTML =
+        `<p style="color:var(--gray-text);font-size:0.85rem;padding:32px;">Error cargando datos: ${e.message}</p>`;
     }
   }
 
-  function filtrarPorCategoria(btn, categoria) {
-    categoriaActiva = categoria;
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  function cambiarTab(tab) {
+    tabActual = tab;
+    document.getElementById('tab-perfiles').classList.toggle('active', tab==='perfiles');
+    document.getElementById('tab-ofertas').classList.toggle('active',  tab==='ofertas');
+    document.getElementById('filtros-perfiles').style.display = tab==='perfiles' ? 'flex' : 'none';
+    document.getElementById('filtros-ofertas').style.display  = tab==='ofertas'  ? 'flex' : 'none';
+    cargar();
+  }
+
+  function filtrarGenero(btn, val) {
+    filtros.genero = val;
+    btn.closest('.filters-row').querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
     btn.classList.add('active');
-    cargarUsuarios(categoria);
+    cargar();
   }
 
-  function filtrarLocal(texto) {
+  function filtrarCategoria(btn, val) {
+    filtros.categoria = val;
+    document.querySelectorAll('#filtros-perfiles .chip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    cargar();
+  }
+
+  function filtrarDirigido(btn, val) {
+    filtros.dirigidoA = val;
+    document.querySelectorAll('#filtros-ofertas .chip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    cargar();
+  }
+
+  function filtrarModalidad(btn, val) {
+    filtros.modalidad = val;
+    document.querySelectorAll('#filtros-ofertas .chip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    cargar();
+  }
+
+  function buscarLocal(texto) {
     const v = texto.toLowerCase();
-    const filtrados = todosLosUsuarios.filter(u =>
-      u.nombre?.toLowerCase().includes(v) ||
-      u.rol?.toLowerCase().includes(v) ||
-      u.ciudad?.toLowerCase().includes(v) ||
-      u.serviciosOfrece?.some(s => s.titulo?.toLowerCase().includes(v))
-    );
-    renderGrid(filtrados);
+    if (!v) { renderGrid(todosItems); return; }
+    renderGrid(todosItems.filter(item => JSON.stringify(item).toLowerCase().includes(v)));
   }
 
-  cargarUsuarios('');
+  cargar();
 </script>
 </body>
 </html>
