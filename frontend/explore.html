@@ -72,7 +72,7 @@
 
 <nav class="navbar">
   <a href="home.html" class="navbar-logo">
-    <svg width="24" height="24" viewBox="0 0 52 52" fill="none"><rect width="52" height="52" rx="14" fill="#111"/><text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text></svg>
+    <img src="logo.svg" style="width:24px;height:24px;" alt="SkillHub"/>
     SkillHub
   </a>
   <input id="search-input" type="text" class="navbar-search" placeholder="Buscar por nombre, habilidad u oferta..."
@@ -157,12 +157,12 @@
   function renderPerfil(u, i) {
     const tags = [...new Set((u.serviciosOfrece||[]).map(s=>s.categoria).filter(Boolean))].slice(0,2);
     const skills = (u.serviciosOfrece||[]).map(s=>s.titulo).slice(0,3).join(' · ') || 'Sin servicios publicados';
-    const esPropio = u._id === sesion?.id;
+    
     const av = u.avatar
       ? `<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt=""/>`
       : iniciales(u.nombre);
 
-    return `<a class="pcard" href="profile.html${esPropio ? '' : '?id='+u._id}">
+    return `<a class="pcard" href="profile.html?id=${u._id}">
       <div class="pcard-head">
         <div class="pcard-av" style="background:${colorPor(i)}">${av}</div>
         <div>

@@ -8,265 +8,44 @@
   <link rel="stylesheet" href="css/styles.css"/>
   <style>
     body { background: #f5f4f1; }
-
-    .page-wrap {
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 40px 24px 80px;
-    }
-
-    .page-title {
-      font-family: var(--font-display);
-      font-size: 1.8rem;
-      color: var(--black);
-      margin-bottom: 8px;
-    }
-
-    .page-sub {
-      font-size: 0.85rem;
-      color: var(--gray-text);
-      margin-bottom: 36px;
-    }
-
-    .card {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 28px;
-      margin-bottom: 20px;
-    }
-
-    .card-title {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--black);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 20px;
-    }
-
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 0.78rem;
-      color: var(--gray-text);
-      margin-bottom: 5px;
-      font-weight: 500;
-    }
-
-    .field input,
-    .field textarea,
-    .field select {
-      width: 100%;
-      background: #f5f4f1;
-      border: 1.5px solid transparent;
-      border-radius: 10px;
-      padding: 11px 14px;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      color: var(--black);
-      outline: none;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .field input:focus,
-    .field textarea:focus,
-    .field select:focus {
-      border-color: var(--black);
-      background: var(--white);
-    }
-
-    .field textarea {
-      resize: vertical;
-      min-height: 90px;
-      line-height: 1.6;
-    }
-
-    /* Avatar */
-    .avatar-editor {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 4px;
-    }
-
-    .avatar-preview {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #c8b8a2, #a08060);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: white;
-      flex-shrink: 0;
-      overflow: hidden;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
+    .page-wrap { max-width: 700px; margin: 0 auto; padding: 40px 24px 80px; }
+    .page-title { font-family: var(--font-display); font-size: 1.8rem; color: var(--black); margin-bottom: 8px; }
+    .page-sub { font-size: 0.85rem; color: var(--gray-text); margin-bottom: 36px; }
+    .card { background: var(--white); border-radius: 16px; padding: 28px; margin-bottom: 20px; }
+    .card-title { font-size: 0.82rem; font-weight: 600; color: var(--black); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 20px; }
+    .field-group { display: flex; flex-direction: column; gap: 12px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field label { display: block; font-size: 0.78rem; color: var(--gray-text); margin-bottom: 5px; font-weight: 500; }
+    .field input, .field textarea, .field select { width: 100%; background: #f5f4f1; border: 1.5px solid transparent; border-radius: 10px; padding: 11px 14px; font-family: var(--font-body); font-size: 0.85rem; color: var(--black); outline: none; transition: border-color 0.2s, background 0.2s; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--black); background: var(--white); }
+    .field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+    .avatar-editor { display: flex; align-items: center; gap: 20px; margin-bottom: 4px; }
+    .avatar-preview { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #c8b8a2, #a08060); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 600; color: white; flex-shrink: 0; overflow: hidden; cursor: pointer; transition: opacity 0.2s; }
     .avatar-preview:hover { opacity: 0.85; }
-
-    .avatar-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-
+    .avatar-preview img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
     .avatar-actions { display: flex; flex-direction: column; gap: 8px; }
-
-    .btn-upload {
-      background: #f5f4f1;
-      border: 1.5px solid var(--gray-mid);
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-family: var(--font-body);
-      font-size: 0.82rem;
-      cursor: pointer;
-      color: var(--black);
-      transition: border-color 0.2s;
-    }
-
+    .btn-upload { background: #f5f4f1; border: 1.5px solid var(--gray-mid); border-radius: 8px; padding: 8px 16px; font-family: var(--font-body); font-size: 0.82rem; cursor: pointer; color: var(--black); transition: border-color 0.2s; }
     .btn-upload:hover { border-color: var(--black); }
-
-    .avatar-hint {
-      font-size: 0.75rem;
-      color: var(--gray-text);
-    }
-
-    /* Servicios dinámicos */
-    .servicio-item {
-      background: #f5f4f1;
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 10px;
-      position: relative;
-    }
-
-    .servicio-item .field-row {
-      grid-template-columns: 2fr 1fr 1fr;
-    }
-
-    .btn-remove {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      color: var(--gray-text);
-      font-size: 1rem;
-      cursor: pointer;
-      line-height: 1;
-      padding: 2px 6px;
-      border-radius: 4px;
-      transition: color 0.2s, background 0.2s;
-    }
-
+    .avatar-hint { font-size: 0.75rem; color: var(--gray-text); }
+    .servicio-item { background: #f5f4f1; border-radius: 10px; padding: 14px; margin-bottom: 10px; position: relative; }
+    .servicio-item .field-row { grid-template-columns: 2fr 1fr 1fr; }
+    .btn-remove { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--gray-text); font-size: 1rem; cursor: pointer; line-height: 1; padding: 2px 6px; border-radius: 4px; transition: color 0.2s, background 0.2s; }
     .btn-remove:hover { color: #c0392b; background: #fff0f0; }
-
-    .btn-add {
-      width: 100%;
-      background: none;
-      border: 1.5px dashed var(--gray-mid);
-      border-radius: 10px;
-      padding: 10px;
-      font-family: var(--font-body);
-      font-size: 0.83rem;
-      color: var(--gray-text);
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 4px;
-    }
-
-    .btn-add:hover {
-      border-color: var(--black);
-      color: var(--black);
-      background: #f5f4f1;
-    }
-
-    /* Busca aprender */
-    .busca-item {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .busca-item input { flex: 1; }
-    .busca-item input.anio { width: 80px; flex: 0 0 80px; }
-
-    /* Botón guardar */
-    .save-bar {
-      position: sticky;
-      bottom: 0;
-      background: var(--white);
-      border-top: 1px solid #e0ddd8;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin: 0 -24px -80px;
-    }
-
-    .btn-save {
-      background: var(--black);
-      color: var(--white);
-      border: none;
-      border-radius: 10px;
-      padding: 12px 32px;
-      font-family: var(--font-body);
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-    }
-
+    .btn-add { width: 100%; background: none; border: 1.5px dashed var(--gray-mid); border-radius: 10px; padding: 10px; font-family: var(--font-body); font-size: 0.83rem; color: var(--gray-text); cursor: pointer; transition: all 0.2s; margin-top: 4px; }
+    .btn-add:hover { border-color: var(--black); color: var(--black); background: #f5f4f1; }
+    .busca-item { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+    .save-bar { position: sticky; bottom: 0; background: var(--white); border-top: 1px solid #e0ddd8; padding: 16px 24px; display: flex; align-items: center; gap: 14px; margin: 0 -24px -80px; }
+    .btn-save { background: var(--black); color: var(--white); border: none; border-radius: 10px; padding: 12px 32px; font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.2s, transform 0.1s; }
     .btn-save:hover { background: #1a1917; transform: translateY(-1px); }
     .btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-    .btn-cancel {
-      background: transparent;
-      border: 1.5px solid var(--gray-mid);
-      border-radius: 10px;
-      padding: 12px 24px;
-      font-family: var(--font-body);
-      font-size: 0.9rem;
-      cursor: pointer;
-      color: var(--black);
-      text-decoration: none;
-    }
-
-    .save-status {
-      font-size: 0.82rem;
-      color: #27ae60;
-      margin-left: auto;
-      display: none;
-    }
-
+    .btn-cancel { background: transparent; border: 1.5px solid var(--gray-mid); border-radius: 10px; padding: 12px 24px; font-family: var(--font-body); font-size: 0.9rem; cursor: pointer; color: var(--black); text-decoration: none; }
+    .save-status { font-size: 0.82rem; color: #27ae60; margin-left: auto; display: none; }
     .save-status.visible { display: block; }
-
-    @media (max-width: 600px) {
-      .field-row { grid-template-columns: 1fr; }
-      .servicio-item .field-row { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } .servicio-item .field-row { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
-<!-- Navbar -->
 <nav class="navbar">
   <a href="home.html" class="navbar-logo">
     <svg width="24" height="24" viewBox="0 0 52 52" fill="none">
@@ -286,7 +65,6 @@
   <h1 class="page-title">Editar perfil</h1>
   <p class="page-sub">Los cambios se guardan en MongoDB al presionar "Guardar"</p>
 
-  <!-- FOTO -->
   <div class="card">
     <div class="card-title">Foto de perfil</div>
     <div class="avatar-editor">
@@ -294,99 +72,68 @@
         <span id="avatar-iniciales">SV</span>
       </div>
       <div class="avatar-actions">
-        <button class="btn-upload" onclick="document.getElementById('avatar-input').click()">
-          Subir foto
-        </button>
-        <button class="btn-upload" id="btn-remove-avatar" style="display:none" onclick="quitarFoto()">
-          Quitar foto
-        </button>
+        <button class="btn-upload" onclick="document.getElementById('avatar-input').click()">Subir foto</button>
+        <button class="btn-upload" id="btn-remove-avatar" style="display:none" onclick="quitarFoto()">Quitar foto</button>
         <span class="avatar-hint">JPG o PNG · máx 2MB</span>
       </div>
     </div>
     <input type="file" id="avatar-input" accept="image/jpeg,image/png" style="display:none" onchange="cargarFoto(this)"/>
   </div>
 
-  <!-- BIO -->
   <div class="card">
     <div class="card-title">Información básica</div>
     <div class="field-group">
       <div class="field-row">
-        <div class="field">
-          <label>Nombre completo</label>
-          <input type="text" id="f-nombre" placeholder="Tu nombre"/>
-        </div>
-        <div class="field">
-          <label>Ciudad</label>
-          <input type="text" id="f-ciudad" placeholder="Cali, Colombia"/>
-        </div>
+        <div class="field"><label>Nombre completo</label><input type="text" id="f-nombre" placeholder="Tu nombre"/></div>
+        <div class="field"><label>Ciudad</label><input type="text" id="f-ciudad" placeholder="Cali, Colombia"/></div>
       </div>
-      <div class="field">
-        <label>Rol / Profesión</label>
-        <input type="text" id="f-rol" placeholder="Ej: Desarrolladora de software, Diseñadora UX..."/>
-      </div>
-      <div class="field">
-        <label>Descripción / Bio</label>
-        <textarea id="f-descripcion" placeholder="Cuéntale a la comunidad quién eres, qué haces y por qué estás en SkillHub..."></textarea>
-      </div>
-      <div class="field">
-        <label>Sitio web</label>
-        <input type="text" id="f-website" placeholder="https://miweb.com"/>
-      </div>
+      <div class="field"><label>Rol / Profesión</label><input type="text" id="f-rol" placeholder="Ej: Desarrolladora de software"/></div>
+      <div class="field"><label>Descripción / Bio</label><textarea id="f-descripcion" placeholder="Cuéntale a la comunidad quién eres..."></textarea></div>
+      <div class="field"><label>Sitio web</label><input type="text" id="f-website" placeholder="https://miweb.com"/></div>
     </div>
   </div>
 
-  <!-- SERVICIOS QUE OFRECE -->
   <div class="card">
     <div class="card-title">Lo que ofrezco</div>
     <div id="servicios-lista"></div>
     <button class="btn-add" onclick="agregarServicio()">+ Agregar habilidad</button>
   </div>
 
-  <!-- LO QUE BUSCA APRENDER -->
   <div class="card">
     <div class="card-title">Lo que busco aprender</div>
     <div id="busca-lista"></div>
     <button class="btn-add" onclick="agregarBusca()">+ Agregar tema</button>
   </div>
 
-  <!-- CONTACTO -->
   <div class="card">
     <div class="card-title">Contacto</div>
     <div class="field-group">
       <div class="field-row">
-        <div class="field">
-          <label>Instagram</label>
-          <input type="text" id="f-instagram" placeholder="tu_usuario (sin @)"/>
-        </div>
-        <div class="field">
-          <label>Número de teléfono</label>
-          <input type="text" id="f-telefono" placeholder="3207655665"/>
-        </div>
+        <div class="field"><label>Instagram</label><input type="text" id="f-instagram" placeholder="tu_usuario (sin @)"/></div>
+        <div class="field"><label>Número de teléfono</label><input type="text" id="f-telefono" placeholder="3207655665"/></div>
       </div>
     </div>
   </div>
 
-  <!-- Barra de guardar -->
   <div class="save-bar">
     <button class="btn-save" id="btn-guardar" onclick="guardarPerfil()">Guardar cambios</button>
     <a href="profile.html" class="btn-cancel">Cancelar</a>
-    <span class="save-status" id="save-status">✓ Guardado en MongoDB</span>
+    <span class="save-status" id="save-status">✓ Guardado</span>
   </div>
 </div>
 
 <script src="js/api.js"></script>
 <script>
   requireAuth();
-
   const sesion = getUsuario();
   let avatarBase64 = '';
 
-  // ── Cargar datos actuales del perfil ──────────────────────────────────────
   async function cargarPerfil() {
     try {
-      const p = await obtenerPerfil(sesion.id);
+      // Siempre carga el perfil propio con /me
+      const p = await obtenerPerfil(null);
 
-      document.getElementById('nav-avatar').textContent = iniciales(p.nombre);
+      document.getElementById('nav-avatar').textContent       = iniciales(p.nombre);
       document.getElementById('avatar-iniciales').textContent = iniciales(p.nombre);
 
       document.getElementById('f-nombre').value      = p.nombre      || '';
@@ -397,108 +144,83 @@
       document.getElementById('f-instagram').value   = p.instagram   || '';
       document.getElementById('f-telefono').value    = p.telefono    || '';
 
-      // Foto
       if (p.avatar) {
         avatarBase64 = p.avatar;
         mostrarFotoEnPreview(p.avatar);
       }
 
-      // Servicios que ofrece
       (p.serviciosOfrece || []).forEach(s => agregarServicio(s));
-
-      // Lo que busca aprender
-      (p.serviciosBusca || []).forEach(b => agregarBusca(b));
+      (p.serviciosBusca  || []).forEach(b => agregarBusca(b));
 
     } catch (err) {
       console.error('Error cargando perfil:', err);
     }
   }
 
-  // ── Avatar ────────────────────────────────────────────────────────────────
   function cargarFoto(input) {
     const file = input.files[0];
     if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      alert('La imagen no puede superar 2MB');
-      return;
-    }
-
+    if (file.size > 2 * 1024 * 1024) { alert('La imagen no puede superar 2MB'); return; }
     const reader = new FileReader();
-    reader.onload = (e) => {
-      avatarBase64 = e.target.result;
-      mostrarFotoEnPreview(avatarBase64);
-    };
+    reader.onload = (e) => { avatarBase64 = e.target.result; mostrarFotoEnPreview(avatarBase64); };
     reader.readAsDataURL(file);
   }
 
   function mostrarFotoEnPreview(src) {
-    const preview = document.getElementById('avatar-preview');
-    preview.innerHTML = `<img src="${src}" alt="foto"/>`;
+    document.getElementById('avatar-preview').innerHTML = `<img src="${src}" alt="foto"/>`;
     document.getElementById('btn-remove-avatar').style.display = 'block';
   }
 
   function quitarFoto() {
     avatarBase64 = '';
-    const preview = document.getElementById('avatar-preview');
-    preview.innerHTML = `<span id="avatar-iniciales">${iniciales(sesion?.nombre || '')}</span>`;
+    document.getElementById('avatar-preview').innerHTML = `<span id="avatar-iniciales">${iniciales(sesion?.nombre || '')}</span>`;
     document.getElementById('btn-remove-avatar').style.display = 'none';
     document.getElementById('avatar-input').value = '';
   }
 
-  // ── Servicios que ofrece ──────────────────────────────────────────────────
   function agregarServicio(datos = {}) {
     const lista = document.getElementById('servicios-lista');
-    const id = Date.now();
     const div = document.createElement('div');
     div.className = 'servicio-item';
-    div.dataset.id = id;
     div.innerHTML = `
       <button class="btn-remove" onclick="this.parentElement.remove()" title="Eliminar">✕</button>
       <div class="field-row">
-        <div class="field">
-          <label>Habilidad / Servicio</label>
-          <input type="text" class="s-titulo" placeholder="Ej: Programación en Python" value="${datos.titulo || ''}"/>
-        </div>
-        <div class="field">
-          <label>Nivel</label>
+        <div class="field"><label>Habilidad / Servicio</label><input type="text" class="s-titulo" placeholder="Ej: Programación en Python" value="${datos.titulo || ''}"/></div>
+        <div class="field"><label>Nivel</label>
           <select class="s-nivel">
             <option value="">Nivel</option>
-            <option value="Básico"     ${datos.nivel === 'Básico'     ? 'selected' : ''}>Básico</option>
-            <option value="Intermedio" ${datos.nivel === 'Intermedio' ? 'selected' : ''}>Intermedio</option>
-            <option value="Avanzado"   ${datos.nivel === 'Avanzado'   ? 'selected' : ''}>Avanzado</option>
-            <option value="Pro"        ${datos.nivel === 'Pro'        ? 'selected' : ''}>Pro</option>
+            <option value="Básico"     ${datos.nivel==='Básico'     ?'selected':''}>Básico</option>
+            <option value="Intermedio" ${datos.nivel==='Intermedio' ?'selected':''}>Intermedio</option>
+            <option value="Avanzado"   ${datos.nivel==='Avanzado'   ?'selected':''}>Avanzado</option>
+            <option value="Pro"        ${datos.nivel==='Pro'        ?'selected':''}>Pro</option>
           </select>
         </div>
-        <div class="field">
-          <label>Categoría</label>
+        <div class="field"><label>Categoría</label>
           <select class="s-categoria">
             <option value="">Categoría</option>
-            <option value="Tecnología" ${datos.categoria === 'Tecnología' ? 'selected' : ''}>Tecnología</option>
-            <option value="Diseño"     ${datos.categoria === 'Diseño'     ? 'selected' : ''}>Diseño</option>
-            <option value="Bienestar"  ${datos.categoria === 'Bienestar'  ? 'selected' : ''}>Bienestar</option>
-            <option value="Finanzas"   ${datos.categoria === 'Finanzas'   ? 'selected' : ''}>Finanzas</option>
-            <option value="Idiomas"    ${datos.categoria === 'Idiomas'    ? 'selected' : ''}>Idiomas</option>
-            <option value="Marketing"  ${datos.categoria === 'Marketing'  ? 'selected' : ''}>Marketing</option>
+            <option value="Tecnología" ${datos.categoria==='Tecnología'?'selected':''}>Tecnología</option>
+            <option value="Diseño"     ${datos.categoria==='Diseño'    ?'selected':''}>Diseño</option>
+            <option value="Bienestar"  ${datos.categoria==='Bienestar' ?'selected':''}>Bienestar</option>
+            <option value="Finanzas"   ${datos.categoria==='Finanzas'  ?'selected':''}>Finanzas</option>
+            <option value="Idiomas"    ${datos.categoria==='Idiomas'   ?'selected':''}>Idiomas</option>
+            <option value="Marketing"  ${datos.categoria==='Marketing' ?'selected':''}>Marketing</option>
           </select>
         </div>
       </div>`;
     lista.appendChild(div);
   }
 
-  // ── Lo que busca aprender ─────────────────────────────────────────────────
   function agregarBusca(datos = {}) {
     const lista = document.getElementById('busca-lista');
     const div = document.createElement('div');
     div.className = 'busca-item';
     div.innerHTML = `
-      <input type="text" placeholder="Ej: Finanzas personales" value="${datos.titulo || ''}" style="flex:1;background:#f5f4f1;border:1.5px solid transparent;border-radius:10px;padding:11px 14px;font-family:var(--font-body);font-size:0.85rem;color:var(--black);outline:none;" onfocus="this.style.borderColor='#111';this.style.background='#fff'" onblur="this.style.borderColor='transparent';this.style.background='#f5f4f1'"/>
-      <input type="number" class="anio" placeholder="Año" value="${datos.anio || ''}" style="width:80px;background:#f5f4f1;border:1.5px solid transparent;border-radius:10px;padding:11px 10px;font-family:var(--font-body);font-size:0.85rem;color:var(--black);outline:none;" onfocus="this.style.borderColor='#111';this.style.background='#fff'" onblur="this.style.borderColor='transparent';this.style.background='#f5f4f1'"/>
-      <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--gray-text);font-size:1rem;cursor:pointer;padding:4px 8px;border-radius:6px;" title="Eliminar">✕</button>`;
+      <input type="text"   placeholder="Ej: Finanzas personales" value="${datos.titulo || ''}" style="flex:1;background:#f5f4f1;border:1.5px solid transparent;border-radius:10px;padding:11px 14px;font-family:var(--font-body);font-size:0.85rem;color:var(--black);outline:none;"/>
+      <input type="number" placeholder="Año" value="${datos.anio || ''}" style="width:80px;background:#f5f4f1;border:1.5px solid transparent;border-radius:10px;padding:11px 10px;font-family:var(--font-body);font-size:0.85rem;color:var(--black);outline:none;"/>
+      <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--gray-text);font-size:1rem;cursor:pointer;padding:4px 8px;border-radius:6px;">✕</button>`;
     lista.appendChild(div);
   }
 
-  // ── Recolectar servicios del DOM ──────────────────────────────────────────
   function recolectarServicios() {
     return [...document.querySelectorAll('.servicio-item')].map(item => ({
       titulo:    item.querySelector('.s-titulo').value.trim(),
@@ -514,7 +236,6 @@
     }).filter(b => b.titulo);
   }
 
-  // ── Guardar en MongoDB ────────────────────────────────────────────────────
   async function guardarPerfil() {
     const btn = document.getElementById('btn-guardar');
     setBtnLoading(btn, true, 'Guardar cambios');
@@ -533,18 +254,19 @@
     };
 
     try {
-      await actualizarPerfil(sesion.id, datos);
+      // actualizarPerfil ya no necesita id, usa /me internamente
+      await actualizarPerfil(datos);
 
-      // Mostrar confirmación
       const status = document.getElementById('save-status');
       status.classList.add('visible');
       setTimeout(() => status.classList.remove('visible'), 3000);
 
       // Actualizar nombre en localStorage si cambió
       const sesionActual = getUsuario();
-      sesionActual.nombre = datos.nombre;
-      localStorage.setItem('usuario', JSON.stringify(sesionActual));
-
+      if (sesionActual) {
+        sesionActual.nombre = datos.nombre;
+        localStorage.setItem('usuario', JSON.stringify(sesionActual));
+      }
     } catch (err) {
       alert('Error al guardar: ' + err.message);
     } finally {
@@ -552,7 +274,6 @@
     }
   }
 
-  // Iniciar
   cargarPerfil();
 </script>
 </body>
