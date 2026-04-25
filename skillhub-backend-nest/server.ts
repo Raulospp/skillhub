@@ -3,11 +3,13 @@
 import 'reflect-metadata';
 import {
   Module, Controller, Get, Post, Patch, Delete,
-  Body, Param, Query, UseGuards, Request,
+  Body, Param, Query, UseGuards, Request, Res,
   Injectable, NotFoundException, ConflictException,
   UnauthorizedException, ValidationPipe,
 } from '@nestjs/common';
 import { NestFactory }           from '@nestjs/core';
+import { Response }              from 'express';
+import cookieParser              from 'cookie-parser';
 import { MongooseModule, InjectModel, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { PassportModule }        from '@nestjs/passport';
 import { JwtModule, JwtService } from '@nestjs/jwt';
@@ -106,7 +108,10 @@ export const ResenaSchema = SchemaFactory.createForClass(Resena);
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // Lee el token desde la cookie HttpOnly en vez del header Authorization
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req: any) => req?.cookies?.access_token ?? null,
+      ]),
       ignoreExpiration: false,
       secretOrKey: JWT_SECRET,
     });
@@ -336,10 +341,30 @@ export class ResenasService {
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // POST /api/auth/login → { access_token }
+  // POST /api/auth/login → guarda el token en una cookie HttpOnly (no lo manda en el body)
   @Post('login')
-  login(@Body() body: { email: string; password: string }) {
-    return this.authService.login(body.email, body.password);
+  async login(
+    @Body() body: { email: string; password: string },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { access_token } = await this.authService.login(body.email, body.password);
+
+    // Cookie segura: JS del navegador NO puede leerla
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      secure: false,       // ponlo en true cuando tengas HTTPS
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
+    });
+
+    return { mensaje: 'Login exitoso' };
+  }
+
+  // POST /api/auth/logout → borra la cookie
+  @Post('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('access_token');
+    return { mensaje: 'Sesión cerrada' };
   }
 }
 
@@ -542,7 +567,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  app.enableCors();
+
+  // Permite leer cookies en los controllers
+  app.use(cookieParser());
+
+  // CORS: credentials:true es obligatorio para que el navegador envíe cookies
+  app.enableCors({
+    origin: true,          // acepta cualquier origen (en producción pon la URL exacta del frontend)
+    credentials: true,     // IMPORTANTE: sin esto las cookies no se envían
+  });
+
   const port = 3000;
   await app.listen(port);
   console.log(`\n🚀 SkillHub NestJS corriendo en http://localhost:${port}/api`);
