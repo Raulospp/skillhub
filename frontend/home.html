@@ -7,181 +7,178 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/styles.css"/>
   <style>
-    body { background: var(--bg); }
-    .hero {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      padding: 60px 80px;
-      gap: 80px;
-      min-height: calc(100vh - 60px - 260px);
-    }
-    .hero-text { max-width: 420px; }
-    .hero-title {
-      font-family: var(--font-display);
-      font-size: 3.2rem;
-      color: var(--black);
-      line-height: 1.15;
-      margin-bottom: 16px;
-    }
-    .hero-sub { font-size: 0.95rem; color: var(--gray-text); margin-bottom: 28px; line-height: 1.6; }
-    .hero-actions { display: flex; gap: 12px; }
-    .btn-primary {
-      background: var(--black);
-      color: var(--white);
-      border: none;
-      border-radius: 8px;
-      padding: 11px 22px;
-      font-family: var(--font-body);
-      font-size: 0.88rem;
-      font-weight: 500;
-      cursor: pointer;
-    }
-    .btn-secondary {
-      background: transparent;
-      border: 1.5px solid var(--gray-mid);
-      color: var(--black);
-      border-radius: 8px;
-      padding: 11px 22px;
-      font-family: var(--font-body);
-      font-size: 0.88rem;
-      cursor: pointer;
-    }
-    .hero-card {
-      flex: 1;
-      display: flex;
-      justify-content: flex-end;
-    }
-    .floating-card {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 28px 24px;
-      width: 320px;
-      box-shadow: 0 8px 48px rgba(0,0,0,0.10);
-      transform: rotate(1.5deg);
-    }
+    .nav-badge{position:absolute;top:-4px;right:-6px;background:#e53935;color:#fff;border-radius:10px;font-size:.65rem;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;pointer-events:none}
+    body { background: var(--bg); display: flex; flex-direction: column; min-height: 100vh; }
 
-    /* Modal calificación */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-    }
+    /* ── Hero ── */
+    .hero { flex: 1; display: flex; align-items: center; padding: 60px 80px; gap: 60px; }
+    .hero-text { max-width: 480px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: #f0ede8; border-radius: 20px; padding: 5px 14px; font-size: .78rem; font-weight: 500; color: #7a6852; margin-bottom: 20px; }
+    .hero-title { font-family: var(--font-display); font-size: 3.4rem; color: var(--black); line-height: 1.12; margin-bottom: 18px; }
+    .hero-title span { color: #a08060; }
+    .hero-sub { font-size: .95rem; color: var(--gray-text); margin-bottom: 32px; line-height: 1.7; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-primary { background: var(--black); color: var(--white); border: none; border-radius: 10px; padding: 12px 24px; font-family: var(--font-body); font-size: .88rem; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-secondary { background: transparent; border: 1.5px solid var(--gray-mid); color: var(--black); border-radius: 10px; padding: 12px 24px; font-family: var(--font-body); font-size: .88rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-secondary:hover { border-color: var(--black); }
+
+    /* ── Floating card ── */
+    .hero-card { flex: 1; display: flex; justify-content: center; align-items: center; }
+    .floating-card { background: var(--white); border-radius: 20px; padding: 28px 24px; width: 300px; box-shadow: 0 8px 48px rgba(0,0,0,.10); transform: rotate(1.5deg); }
+    .fc-avatar { width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg,#c8b8a2,#a08060); display: flex; align-items: center; justify-content: center; font-weight: 600; color: white; font-size: 1.1rem; overflow: hidden; flex-shrink: 0; }
+    .fc-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .fc-nombre { font-size: .95rem; font-weight: 600; color: var(--black); }
+    .fc-rol { font-size: .77rem; color: var(--gray-text); margin-top: 2px; }
+    .fc-label { font-size: .7rem; font-weight: 600; letter-spacing: .04em; color: var(--gray-text); text-transform: uppercase; margin: 16px 0 6px; }
+    .fc-skills { font-size: .82rem; color: #555; line-height: 1.8; }
+
+    /* ── Stats ── */
+    .stats-row { display: flex; gap: 0; background: var(--white); border-top: 1px solid #e8e5e0; }
+    .stat-item { flex: 1; padding: 24px 32px; text-align: center; border-right: 1px solid #e8e5e0; }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-family: var(--font-display); font-size: 1.8rem; color: var(--black); }
+    .stat-label { font-size: .78rem; color: var(--gray-text); margin-top: 4px; }
+
+    /* ── Modal ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 200; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 32px;
-      width: 380px;
-      max-width: 90vw;
-    }
+    .modal { background: var(--white); border-radius: 16px; padding: 32px; width: 380px; max-width: 90vw; }
     .modal h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
+    .modal label { font-size: .78rem; color: var(--gray-text); display: block; margin-bottom: 6px; }
+    .modal input { width: 100%; background: #f5f4f1; border: 1.5px solid transparent; border-radius: 10px; padding: 10px 14px; font-family: var(--font-body); font-size: .85rem; color: var(--black); outline: none; margin-bottom: 14px; }
     .stars { display: flex; gap: 8px; margin-bottom: 16px; }
-    .star { font-size: 1.8rem; cursor: pointer; opacity: 0.3; transition: opacity 0.1s; }
+    .star { font-size: 1.8rem; cursor: pointer; opacity: .3; transition: opacity .1s; }
     .star.active { opacity: 1; }
-    .modal textarea {
-      width: 100%;
-      border: 1.5px solid var(--gray-mid);
-      border-radius: 10px;
-      padding: 12px;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      resize: vertical;
-      min-height: 80px;
-      outline: none;
-    }
+    .modal textarea { width: 100%; border: 1.5px solid var(--gray-mid); border-radius: 10px; padding: 12px; font-family: var(--font-body); font-size: .85rem; resize: vertical; min-height: 80px; outline: none; }
     .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
-    .modal-cancel {
-      flex: 1;
-      background: transparent;
-      border: 1.5px solid var(--gray-mid);
-      border-radius: 8px;
-      padding: 10px;
-      font-family: var(--font-body);
-      cursor: pointer;
-    }
-    .modal-submit {
-      flex: 2;
-      background: var(--black);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px;
-      font-family: var(--font-body);
-      font-weight: 500;
-      cursor: pointer;
-    }
+    .modal-cancel { flex: 1; background: transparent; border: 1.5px solid var(--gray-mid); border-radius: 8px; padding: 10px; font-family: var(--font-body); cursor: pointer; }
+    .modal-submit { flex: 2; background: var(--black); color: white; border: none; border-radius: 8px; padding: 10px; font-family: var(--font-body); font-weight: 500; cursor: pointer; }
 
-    footer {
-      background: var(--white);
-      border-top: 1px solid #e0ddd8;
-      padding: 48px 80px;
-      display: flex;
-      gap: 80px;
-      align-items: flex-start;
-    }
-    .footer-col-title { font-size: 0.8rem; font-weight: 600; color: var(--black); margin-bottom: 14px; }
-    .footer-links { display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem; color: var(--gray-text); }
-    .footer-links a { color: var(--gray-text); text-decoration: none; cursor: pointer; }
+    /* ── Footer ── */
+    footer { background: var(--white); border-top: 1px solid #e0ddd8; padding: 48px 80px; display: flex; gap: 80px; align-items: flex-start; }
+    .footer-col-title { font-size: .8rem; font-weight: 600; color: var(--black); margin-bottom: 14px; }
+    .footer-links { display: flex; flex-direction: column; gap: 8px; font-size: .82rem; color: var(--gray-text); }
+    .footer-links a { color: var(--gray-text); text-decoration: none; }
     .footer-links a:hover { color: var(--black); }
 
-    @media (max-width: 768px) {
+    /* ── Empresa hero alternativo ── */
+    .empresa-hero { display: none; }
+    .empresa-hero .hero-title { font-size: 2.8rem; }
+
+    @media(max-width:768px){
       .hero { flex-direction: column; padding: 32px 24px; gap: 32px; }
       .hero-card { display: none; }
+      .stats-row { flex-wrap: wrap; }
+      .stat-item { min-width: 50%; border-bottom: 1px solid #e8e5e0; }
       footer { flex-direction: column; gap: 32px; padding: 32px 24px; }
     }
   </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<img src="logo.svg" style="width:24px;height:24px;" alt="SkillHub logo"/>
+<nav class="navbar">
+  <a href="home.html" class="navbar-logo">
+    <img src="logo.svg" style="width:24px;height:24px;" alt="SkillHub"/>
     SkillHub
   </a>
-  <input type="text" class="navbar-search" placeholder="Buscar servicios..."
-    onfocus="window.location.href='explore.html'"/>
+  <input type="text" class="navbar-search" placeholder="Buscar habilidades..." onfocus="window.location.href='explore.html'"/>
   <div class="navbar-spacer"></div>
-  <a href="profile.html" class="btn-nav">Perfil profesional</a>
+  <a href="solicitudes.html"      class="btn-nav" id="btn-solicitudes"    style="display:none">Solicitudes</a>
+  <a href="mis-postulaciones.html" class="btn-nav" id="btn-postulaciones" style="display:none">Mis postulaciones</a>
+  <a href="mis-ofertas.html"   class="btn-nav" id="btn-mis-ofertas" style="display:none">Mis ofertas</a>
+  <a href="nueva-oferta.html"  class="btn-nav" id="btn-publicar"    style="display:none">+ Publicar oferta</a>
+  <a href="explore.html"       class="btn-nav" id="btn-explorar">Explorar</a>
+  <a href="chat.html" class="btn-nav" id="btn-chat" style="position:relative">💬<span class="nav-badge" id="badge-chat" style="display:none"></span></a>
+  <a href="notificaciones.html" class="btn-nav" id="btn-notif" style="position:relative">🔔<span class="nav-badge" id="badge-notif" style="display:none"></span></a>
   <a href="profile.html" class="avatar-btn">
-    <div class="avatar-inner" id="nav-avatar">SV</div>
+    <div class="avatar-inner" id="nav-avatar">??</div>
   </a>
 </nav>
 
-<!-- Hero -->
-<div class="hero">
+<!-- Hero candidata -->
+<div class="hero" id="hero-candidata">
   <div class="hero-text">
-    <h1 class="hero-title">Herramienta para todos</h1>
-    <p class="hero-sub">Califica el servicio recibido y ayuda a crecer la comunidad</p>
+    <div class="hero-badge">🌸 Para mujeres y jóvenes</div>
+    <h1 class="hero-title">Tu talento<br/>merece ser<br/><span>reconocido</span></h1>
+    <p class="hero-sub">Comparte tus habilidades, encuentra oportunidades y conecta con empresas que valoran la diversidad.</p>
     <div class="hero-actions">
-      <button class="btn-primary" onclick="document.getElementById('modal-calificar').classList.add('open')">Calificar</button>
-      <a href="explore.html" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;">Ver perfiles</a>
+      <a href="explore.html" class="btn-primary">Explorar oportunidades</a>
+      <a href="solicitudes.html" class="btn-secondary">Mis solicitudes</a>
     </div>
   </div>
-
-  <!-- Tarjeta flotante con datos dinámicos -->
   <div class="hero-card">
-    <div class="floating-card" id="floating-profile">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
-        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#c8b8a2,#a08060);display:flex;align-items:center;justify-content:center;font-weight:600;color:white;font-size:1.1rem;" id="hero-avatar">SV</div>
+    <div class="floating-card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px;">
+        <div class="fc-avatar" id="hero-avatar">??</div>
         <div>
-          <div style="font-size:0.95rem;font-weight:600;color:var(--black);" id="hero-nombre">Cargando...</div>
-          <div style="font-size:0.77rem;color:var(--gray-text);" id="hero-rol">SkillHub</div>
+          <div class="fc-nombre" id="hero-nombre">Cargando...</div>
+          <div class="fc-rol"    id="hero-rol">SkillHub</div>
         </div>
       </div>
-      <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.04em;color:var(--gray-text);text-transform:uppercase;margin-bottom:8px;">Mis servicios</div>
-      <div id="hero-servicios" style="font-size:0.82rem;color:#555;line-height:1.8;">Cargando...</div>
+      <div class="fc-label">Mis habilidades</div>
+      <div class="fc-skills" id="hero-servicios">Cargando...</div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid #f0ede8;display:flex;justify-content:space-between;">
+        <div style="text-align:center">
+          <div style="font-size:1rem;font-weight:600;color:var(--black)" id="fc-horas">0</div>
+          <div style="font-size:.72rem;color:var(--gray-text)">Horas<br/>aportadas</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:1rem;font-weight:600;color:var(--black)" id="fc-val">—</div>
+          <div style="font-size:.72rem;color:var(--gray-text)">Valoración</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:1rem;font-weight:600;color:var(--black)" id="fc-solicitudes">0</div>
+          <div style="font-size:.72rem;color:var(--gray-text)">Solicitudes</div>
+        </div>
+      </div>
     </div>
   </div>
+</div>
+
+<!-- Hero empresa -->
+<div class="hero empresa-hero" id="hero-empresa">
+  <div class="hero-text">
+    <div class="hero-badge">🏢 Panel de empresa</div>
+    <h1 class="hero-title">Encuentra el<br/><span>talento</span> que<br/>necesitas</h1>
+    <p class="hero-sub">Publica ofertas, revisa postulaciones y conecta con mujeres y jóvenes talentosos de tu ciudad.</p>
+    <div class="hero-actions">
+      <a href="nueva-oferta.html" class="btn-primary">+ Publicar oferta</a>
+      <a href="mis-ofertas.html"  class="btn-secondary">Ver mis ofertas</a>
+    </div>
+  </div>
+  <div class="hero-card">
+    <div class="floating-card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+        <div class="fc-avatar" id="empresa-avatar">??</div>
+        <div>
+          <div class="fc-nombre" id="empresa-nombre">Cargando...</div>
+          <div class="fc-rol"    id="empresa-sector">Empresa</div>
+        </div>
+      </div>
+      <div class="fc-label">Accesos rápidos</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+        <a href="nueva-oferta.html"  style="background:#f5f4f1;border-radius:8px;padding:10px 14px;font-size:.82rem;color:var(--black);text-decoration:none;display:flex;align-items:center;gap:8px;">📋 Publicar nueva oferta</a>
+        <a href="mis-ofertas.html"   style="background:#f5f4f1;border-radius:8px;padding:10px 14px;font-size:.82rem;color:var(--black);text-decoration:none;display:flex;align-items:center;gap:8px;">👥 Ver postulaciones</a>
+        <a href="explore.html"       style="background:#f5f4f1;border-radius:8px;padding:10px 14px;font-size:.82rem;color:var(--black);text-decoration:none;display:flex;align-items:center;gap:8px;">🔍 Explorar candidatas</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-row">
+  <div class="stat-item"><div class="stat-num">🌸</div><div class="stat-label">Enfocado en mujeres y jóvenes</div></div>
+  <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Gratuito para candidatas</div></div>
+  <div class="stat-item"><div class="stat-num">💬</div><div class="stat-label">Chat directo con empresas</div></div>
+  <div class="stat-item"><div class="stat-num">⭐</div><div class="stat-label">Sistema de valoraciones</div></div>
 </div>
 
 <!-- Modal calificar -->
 <div class="modal-overlay" id="modal-calificar">
   <div class="modal">
     <h3>Calificar servicio recibido</h3>
+    <label>ID del usuario a calificar</label>
+    <input type="text" id="receptor-id" placeholder="Pega el ID del perfil"/>
     <div class="stars" id="stars">
       <span class="star" data-val="1">★</span>
       <span class="star" data-val="2">★</span>
@@ -198,25 +195,25 @@
   </div>
 </div>
 
-<!-- Footer -->
 <footer>
   <div style="max-width:260px;">
-    <div style="font-weight:600;font-size:0.95rem;color:var(--black);margin-bottom:6px;">SkillHub</div>
-    <div style="font-size:0.82rem;color:var(--gray-text);line-height:1.5;margin-bottom:20px;">Banco Digital de Habilidades para Mujeres y Jóvenes</div>
+    <div style="font-weight:600;font-size:.95rem;color:var(--black);margin-bottom:6px;">SkillHub</div>
+    <div style="font-size:.82rem;color:var(--gray-text);line-height:1.5;">Banco Digital de Habilidades para Mujeres y Jóvenes</div>
   </div>
   <div>
-    <div class="footer-col-title">Servicios</div>
+    <div class="footer-col-title">Plataforma</div>
     <div class="footer-links">
-      <a href="profile.html">Publicar servicio</a>
-      <a href="profile.html">Editar servicio</a>
-      <a href="explore.html">Ver servicios</a>
+      <a href="explore.html">Explorar habilidades</a>
+      <a href="solicitudes.html">Solicitudes de intercambio</a>
+      <a href="favoritos.html">Guardados</a>
+      <a href="notificaciones.html">Notificaciones</a>
     </div>
   </div>
   <div>
-    <div class="footer-col-title">Soporte</div>
+    <div class="footer-col-title">Cuenta</div>
     <div class="footer-links">
-      <a href="#">Contacto</a>
-      <a href="#">Legal</a>
+      <a href="profile.html">Mi perfil</a>
+      <a href="edit-profile.html">Editar perfil</a>
       <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
     </div>
   </div>
@@ -226,71 +223,100 @@
 <script>
   requireAuth();
 
-  const usuario = getUsuario();
-  if (usuario) {
-    document.getElementById('nav-avatar').textContent = iniciales(usuario.nombre);
-    document.getElementById('hero-avatar').textContent = iniciales(usuario.nombre);
-    document.getElementById('hero-nombre').textContent = usuario.nombre;
-  }
-
-  // Cargar perfil completo
-  async function cargarPerfil() {
-    if (!usuario) return;
+  async function init() {
     try {
-      const perfil = await obtenerPerfil(usuario.id);
-      document.getElementById('hero-rol').textContent = perfil.rol || 'Miembro de SkillHub';
-      if (perfil.serviciosOfrece && perfil.serviciosOfrece.length > 0) {
-        document.getElementById('hero-servicios').textContent =
-          perfil.serviciosOfrece.map(s => s.titulo).join(' · ');
+      const perfil = await obtenerMiPerfil();
+      const esEmpresa = perfil.tipoUsuario === 'empresa';
+
+      // Navbar
+      document.getElementById('nav-avatar').textContent = iniciales(perfil.nombre);
+      if (esEmpresa) {
+        document.getElementById('btn-mis-ofertas').style.display  = 'inline-flex';
+        document.getElementById('btn-publicar').style.display     = 'inline-flex';
+        document.getElementById('btn-solicitudes').style.display  = 'none';
       } else {
-        document.getElementById('hero-servicios').textContent = 'Aún sin servicios publicados';
+        document.getElementById('btn-solicitudes').style.display   = 'inline-flex';
+        document.getElementById('btn-postulaciones').style.display = 'inline-flex';
       }
-    } catch (e) {
-      document.getElementById('hero-servicios').textContent = 'No se pudo cargar';
-    }
+
+      // Hero
+      if (esEmpresa) {
+        document.getElementById('hero-candidata').style.display = 'none';
+        document.getElementById('hero-empresa').style.display   = 'flex';
+        document.getElementById('empresa-avatar').textContent   = iniciales(perfil.nombreEmpresa || perfil.nombre);
+        document.getElementById('empresa-nombre').textContent   = perfil.nombreEmpresa || perfil.nombre;
+        document.getElementById('empresa-sector').textContent   = perfil.sectorEmpresa || 'Empresa';
+      } else {
+        document.getElementById('hero-avatar').textContent   = iniciales(perfil.nombre);
+        document.getElementById('hero-nombre').textContent   = perfil.nombre;
+        document.getElementById('hero-rol').textContent      = perfil.rol || 'Miembro de SkillHub';
+        document.getElementById('fc-horas').textContent      = perfil.horasAportadas || 0;
+        document.getElementById('fc-val').textContent        = perfil.valoracion ? perfil.valoracion.toFixed(1)+'⭐' : '—';
+        if (perfil.avatar) {
+          document.getElementById('hero-avatar').innerHTML = `<img src="${perfil.avatar}" alt="foto"/>`;
+        }
+        const skills = (perfil.serviciosOfrece||[]).map(s=>s.titulo).join(' · ');
+        document.getElementById('hero-servicios').textContent = skills || 'Agrega tus habilidades en tu perfil';
+
+        // Contar solicitudes pendientes
+        try {
+          const sols = await obtenerMisSolicitudes();
+          const pendientes = sols.filter(s => s.estado === 'pendiente').length;
+          document.getElementById('fc-solicitudes').textContent = pendientes;
+        } catch(_){}
+      }
+    } catch(e) { console.error(e); }
   }
 
-  cargarPerfil();
+  async function cargarBadges() {
+    try {
+      const count = await contarNotificaciones();
+      const n = typeof count === 'number' ? count : (count?.count || 0);
+      const badge = document.getElementById('badge-notif');
+      badge.style.display = n > 0 ? 'block' : 'none';
+      badge.textContent   = n > 9 ? '9+' : n;
+    } catch {}
+    try {
+      const convs = await obtenerConversaciones();
+      const noLeidos = convs.reduce((s,c) => s + (c.noLeidos||0), 0);
+      const badge = document.getElementById('badge-chat');
+      badge.style.display = noLeidos > 0 ? 'block' : 'none';
+      badge.textContent   = noLeidos > 9 ? '9+' : noLeidos;
+    } catch {}
+  }
+
+  init();
+  cargarBadges();
+  setInterval(cargarBadges, 15000);
 
   // Estrellas
   let puntuacion = 0;
   document.querySelectorAll('.star').forEach(star => {
     star.addEventListener('click', () => {
       puntuacion = parseInt(star.dataset.val);
-      document.querySelectorAll('.star').forEach((s, i) => {
-        s.classList.toggle('active', i < puntuacion);
-      });
+      document.querySelectorAll('.star').forEach((s,i) => s.classList.toggle('active', i < puntuacion));
     });
   });
 
-  // Enviar reseña
   document.getElementById('btn-enviar-resena').addEventListener('click', async () => {
+    const receptorId = document.getElementById('receptor-id').value.trim();
     const comentario = document.getElementById('comentario-resena').value.trim();
     ocultarError('error-resena');
-
-    if (!puntuacion) { mostrarError('error-resena', 'Selecciona una puntuación'); return; }
-    if (!comentario) { mostrarError('error-resena', 'Escribe un comentario'); return; }
-
+    if (!receptorId)  { mostrarError('error-resena','Ingresa el ID del usuario'); return; }
+    if (!puntuacion)  { mostrarError('error-resena','Selecciona una puntuación'); return; }
+    if (!comentario)  { mostrarError('error-resena','Escribe un comentario'); return; }
     const btn = document.getElementById('btn-enviar-resena');
     setBtnLoading(btn, true, 'Enviar calificación');
-
     try {
-      await crearResena({
-        autorId: usuario.id,
-        receptorId: usuario.id, // En producción se pasaría el ID del proveedor
-        puntuacion,
-        comentario,
-      });
+      await crearResena({ receptorId, puntuacion, comentario });
       document.getElementById('modal-calificar').classList.remove('open');
       puntuacion = 0;
       document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
       document.getElementById('comentario-resena').value = '';
+      document.getElementById('receptor-id').value = '';
       alert('¡Calificación enviada!');
-    } catch (err) {
-      mostrarError('error-resena', err.message || 'Error al enviar');
-    } finally {
-      setBtnLoading(btn, false, 'Enviar calificación');
-    }
+    } catch(err) { mostrarError('error-resena', err.message||'Error al enviar'); }
+    finally { setBtnLoading(btn, false, 'Enviar calificación'); }
   });
 </script>
 </body>

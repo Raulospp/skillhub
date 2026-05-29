@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Notificaciones</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    body { background: var(--bg); }
+    .page { max-width: 680px; margin: 0 auto; padding: 32px 24px; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .page-title { font-family: var(--font-display); font-size: 1.8rem; color: var(--black); }
+    .btn-leer-todo { background: transparent; border: 1.5px solid var(--gray-mid); color: var(--black); border-radius: 8px; padding: 7px 16px; font-family: var(--font-body); font-size: 0.82rem; cursor: pointer; }
+    .btn-leer-todo:hover { background: var(--gray-light); }
+
+    .n-card { background: var(--white); border-radius: 14px; padding: 16px 20px; margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start; cursor: pointer; transition: opacity .15s; border-left: 3px solid transparent; }
+    .n-card.no-leida { border-left-color: var(--black); background: #fafaf8; }
+    .n-card:hover { opacity: 0.85; }
+    .n-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .tipo-solicitud  .n-icon { background: #e8f0fe; }
+    .tipo-aceptada   .n-icon { background: #e8f5e9; }
+    .tipo-rechazada  .n-icon { background: #fde8e8; }
+    .tipo-postulacion .n-icon { background: #fff8e1; }
+    .tipo-mensaje    .n-icon { background: #f3e8fd; }
+    .n-body { flex: 1; }
+    .n-texto { font-size: 0.88rem; color: var(--black); line-height: 1.5; margin-bottom: 4px; }
+    .n-fecha { font-size: 0.75rem; color: var(--gray-text); }
+    .n-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--black); flex-shrink: 0; margin-top: 6px; }
+
+    .empty-state { text-align: center; padding: 80px 20px; color: var(--gray-text); }
+    .empty-state .emoji { font-size: 2.5rem; margin-bottom: 12px; }
+    .loading { text-align: center; padding: 40px; color: var(--gray-text); font-size: 0.9rem; }
+
+    .grupo-fecha { font-size: 0.75rem; font-weight: 600; color: var(--gray-text); text-transform: uppercase; letter-spacing: 0.06em; margin: 20px 0 10px; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="home.html" class="navbar-logo">
+    <img src="logo.svg" style="width:24px;height:24px;" alt="SkillHub"/>
+    SkillHub
+  </a>
+  <div class="navbar-spacer"></div>
+  <a href="explore.html"      class="btn-nav">Explorar</a>
+  <a href="solicitudes.html"  class="btn-nav">Solicitudes</a>
+  <a href="favoritos.html"    class="btn-nav">Guardados</a>
+  <a href="profile.html" class="avatar-btn">
+    <div class="avatar-inner" id="nav-avatar">??</div>
+  </a>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">Notificaciones</h1>
+    <button class="btn-leer-todo" onclick="leerTodo()">Marcar todo como leído</button>
+  </div>
+  <div id="lista"><div class="loading">Cargando...</div></div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  requireAuth();
+  const sesion = getUsuario();
+  if (sesion) document.getElementById('nav-avatar').textContent = iniciales(sesion.nombre);
+
+  const ICONOS = {
+    solicitud:   '🤝',
+    aceptada:    '✅',
+    rechazada:   '❌',
+    postulacion: '📋',
+    mensaje:     '💬',
+  };
+
+  function tiempoRelativo(fecha) {
+    const diff = Date.now() - new Date(fecha).getTime();
+    const min  = Math.floor(diff / 60000);
+    const hrs  = Math.floor(diff / 3600000);
+    const dias = Math.floor(diff / 86400000);
+    if (min  <  1) return 'Ahora mismo';
+    if (min  < 60) return `Hace ${min} min`;
+    if (hrs  < 24) return `Hace ${hrs} h`;
+    if (dias <  7) return `Hace ${dias} día${dias > 1 ? 's' : ''}`;
+    return new Date(fecha).toLocaleDateString('es', { day: 'numeric', month: 'short' });
+  }
+
+  async function cargar() {
+    try {
+      const notifs = await obtenerNotificaciones();
+      if (!notifs.length) {
+        document.getElementById('lista').innerHTML = `
+          <div class="empty-state">
+            <div class="emoji">🔔</div>
+            <p>No tienes notificaciones aún</p>
+          </div>`;
+        return;
+      }
+
+      document.getElementById('lista').innerHTML = notifs.map(n => `
+        <div class="n-card ${n.leida ? '' : 'no-leida'} tipo-${n.tipo}"
+             onclick="abrir('${n._id}','${n.enlace}')">
+          <div class="n-icon">${ICONOS[n.tipo] || '🔔'}</div>
+          <div class="n-body">
+            <div class="n-texto">${n.texto}</div>
+            <div class="n-fecha">${tiempoRelativo(n.createdAt)}</div>
+          </div>
+          ${!n.leida ? '<div class="n-dot"></div>' : ''}
+        </div>`).join('');
+    } catch(e) {
+      document.getElementById('lista').innerHTML = `<div class="empty-state"><div class="emoji">⚠️</div><p>${e.message}</p></div>`;
+    }
+  }
+
+  async function abrir(id, enlace) {
+    await marcarNotificacionLeida(id);
+    if (enlace) window.location.href = enlace;
+    else cargar();
+  }
+
+  async function leerTodo() {
+    await marcarTodasLeidas();
+    cargar();
+  }
+
+  cargar();
+</script>
+</body>
+</html>

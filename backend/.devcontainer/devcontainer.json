@@ -1,0 +1,17 @@
+{
+  "name": "SkillHub",
+  "forwardPorts": [3000, 5500],
+  "portsAttributes": {
+    "3000": {
+      "label": "Backend NestJS",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    },
+    "5500": {
+      "label": "Frontend",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    }
+  },
+  "postStartCommand": "echo '✅ Puertos 3000 y 5500 públicos automáticamente'"
+}

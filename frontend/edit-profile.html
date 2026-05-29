@@ -7,66 +7,58 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/styles.css"/>
   <style>
-    body { background: #f5f4f1; }
-    .page-wrap { max-width: 700px; margin: 0 auto; padding: 40px 24px 80px; }
-    .page-title { font-family: var(--font-display); font-size: 1.8rem; color: var(--black); margin-bottom: 8px; }
-    .page-sub { font-size: 0.85rem; color: var(--gray-text); margin-bottom: 36px; }
-    .card { background: var(--white); border-radius: 16px; padding: 28px; margin-bottom: 20px; }
-    .card-title { font-size: 0.82rem; font-weight: 600; color: var(--black); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 20px; }
-    .field-group { display: flex; flex-direction: column; gap: 12px; }
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .field label { display: block; font-size: 0.78rem; color: var(--gray-text); margin-bottom: 5px; font-weight: 500; }
-    .field input, .field textarea, .field select { width: 100%; background: #f5f4f1; border: 1.5px solid transparent; border-radius: 10px; padding: 11px 14px; font-family: var(--font-body); font-size: 0.85rem; color: var(--black); outline: none; transition: border-color 0.2s, background 0.2s; }
-    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--black); background: var(--white); }
-    .field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
-    .avatar-editor { display: flex; align-items: center; gap: 20px; margin-bottom: 4px; }
-    .avatar-preview { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #c8b8a2, #a08060); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 600; color: white; flex-shrink: 0; overflow: hidden; cursor: pointer; transition: opacity 0.2s; }
-    .avatar-preview:hover { opacity: 0.85; }
-    .avatar-preview img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-    .avatar-actions { display: flex; flex-direction: column; gap: 8px; }
-    .btn-upload { background: #f5f4f1; border: 1.5px solid var(--gray-mid); border-radius: 8px; padding: 8px 16px; font-family: var(--font-body); font-size: 0.82rem; cursor: pointer; color: var(--black); transition: border-color 0.2s; }
-    .btn-upload:hover { border-color: var(--black); }
-    .avatar-hint { font-size: 0.75rem; color: var(--gray-text); }
-    .servicio-item { background: #f5f4f1; border-radius: 10px; padding: 14px; margin-bottom: 10px; position: relative; }
-    .servicio-item .field-row { grid-template-columns: 2fr 1fr 1fr; }
-    .btn-remove { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--gray-text); font-size: 1rem; cursor: pointer; line-height: 1; padding: 2px 6px; border-radius: 4px; transition: color 0.2s, background 0.2s; }
-    .btn-remove:hover { color: #c0392b; background: #fff0f0; }
-    .btn-add { width: 100%; background: none; border: 1.5px dashed var(--gray-mid); border-radius: 10px; padding: 10px; font-family: var(--font-body); font-size: 0.83rem; color: var(--gray-text); cursor: pointer; transition: all 0.2s; margin-top: 4px; }
-    .btn-add:hover { border-color: var(--black); color: var(--black); background: #f5f4f1; }
-    .busca-item { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
-    .save-bar { position: sticky; bottom: 0; background: var(--white); border-top: 1px solid #e0ddd8; padding: 16px 24px; display: flex; align-items: center; gap: 14px; margin: 0 -24px -80px; }
-    .btn-save { background: var(--black); color: var(--white); border: none; border-radius: 10px; padding: 12px 32px; font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.2s, transform 0.1s; }
-    .btn-save:hover { background: #1a1917; transform: translateY(-1px); }
-    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .btn-cancel { background: transparent; border: 1.5px solid var(--gray-mid); border-radius: 10px; padding: 12px 24px; font-family: var(--font-body); font-size: 0.9rem; cursor: pointer; color: var(--black); text-decoration: none; }
-    .save-status { font-size: 0.82rem; color: #27ae60; margin-left: auto; display: none; }
-    .save-status.visible { display: block; }
-    @media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } .servicio-item .field-row { grid-template-columns: 1fr; } }
+    body{background:#f5f4f1}
+    .page-wrap{max-width:700px;margin:0 auto;padding:40px 24px 80px}
+    .page-title{font-family:var(--font-display);font-size:1.8rem;color:var(--black);margin-bottom:8px}
+    .page-sub{font-size:.85rem;color:var(--gray-text);margin-bottom:36px}
+    .card{background:var(--white);border-radius:16px;padding:28px;margin-bottom:20px}
+    .card-title{font-size:.82rem;font-weight:600;color:var(--black);text-transform:uppercase;letter-spacing:.04em;margin-bottom:20px}
+    .field-group{display:flex;flex-direction:column;gap:12px}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field label{display:block;font-size:.78rem;color:var(--gray-text);margin-bottom:5px;font-weight:500}
+    .field input,.field textarea,.field select{width:100%;background:#f5f4f1;border:1.5px solid transparent;border-radius:10px;padding:11px 14px;font-family:var(--font-body);font-size:.85rem;color:var(--black);outline:none;transition:border-color .2s,background .2s}
+    .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--black);background:var(--white)}
+    .field textarea{resize:vertical;min-height:90px;line-height:1.6}
+    .avatar-editor{display:flex;align-items:center;gap:20px;margin-bottom:4px}
+    .avatar-preview{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#c8b8a2,#a08060);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:600;color:white;flex-shrink:0;overflow:hidden;cursor:pointer}
+    .avatar-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .avatar-actions{display:flex;flex-direction:column;gap:8px}
+    .btn-upload{background:#f5f4f1;border:1.5px solid var(--gray-mid);border-radius:8px;padding:8px 16px;font-family:var(--font-body);font-size:.82rem;cursor:pointer;color:var(--black)}
+    .avatar-hint{font-size:.75rem;color:var(--gray-text)}
+    .servicio-item{background:#f5f4f1;border-radius:10px;padding:14px;margin-bottom:10px;position:relative}
+    .servicio-item .field-row{grid-template-columns:2fr 1fr 1fr}
+    .btn-remove{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--gray-text);font-size:1rem;cursor:pointer;padding:2px 6px;border-radius:4px}
+    .btn-remove:hover{color:#c0392b}
+    .btn-add{width:100%;background:none;border:1.5px dashed var(--gray-mid);border-radius:10px;padding:10px;font-family:var(--font-body);font-size:.83rem;color:var(--gray-text);cursor:pointer;transition:all .2s;margin-top:4px}
+    .btn-add:hover{border-color:var(--black);color:var(--black);background:#f5f4f1}
+    .busca-item{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+    .save-bar{position:sticky;bottom:0;background:var(--white);border-top:1px solid #e0ddd8;padding:16px 24px;display:flex;align-items:center;gap:14px;margin:0 -24px -80px}
+    .btn-save{background:var(--black);color:var(--white);border:none;border-radius:10px;padding:12px 32px;font-family:var(--font-body);font-size:.9rem;font-weight:500;cursor:pointer}
+    .btn-save:disabled{opacity:.6;cursor:not-allowed}
+    .btn-cancel{background:transparent;border:1.5px solid var(--gray-mid);border-radius:10px;padding:12px 24px;font-family:var(--font-body);font-size:.9rem;cursor:pointer;color:var(--black);text-decoration:none}
+    .save-status{font-size:.82rem;color:#27ae60;margin-left:auto;display:none}
+    .save-status.visible{display:block}
+    .info-box{background:#f0f7ff;border-left:3px solid #2563eb;border-radius:8px;padding:12px 16px;font-size:.82rem;color:#1e3a5f;line-height:1.6;margin-bottom:16px}
+    @media(max-width:600px){.field-row{grid-template-columns:1fr}.servicio-item .field-row{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-
 <nav class="navbar">
   <a href="home.html" class="navbar-logo">
-    <svg width="24" height="24" viewBox="0 0 52 52" fill="none">
-      <rect width="52" height="52" rx="14" fill="#111"/>
-      <text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text>
-    </svg>
-    SkillHub
+    <img src="logo.svg" style="width:24px;height:24px;" alt="SkillHub"/>SkillHub
   </a>
   <div class="navbar-spacer"></div>
   <a href="profile.html" class="btn-nav">Ver mi perfil</a>
-  <a href="profile.html" class="avatar-btn">
-    <div class="avatar-inner" id="nav-avatar">SV</div>
-  </a>
+  <a href="profile.html" class="avatar-btn"><div class="avatar-inner" id="nav-avatar">SV</div></a>
 </nav>
 
 <div class="page-wrap">
-  <h1 class="page-title">Editar perfil</h1>
-  <p class="page-sub">Los cambios se guardan en MongoDB al presionar "Guardar"</p>
+  <h1 class="page-title" id="page-title">Editar perfil</h1>
+  <p class="page-sub" id="page-sub">Los cambios se guardan en MongoDB al presionar "Guardar"</p>
 
+  <!-- Foto -->
   <div class="card">
-    <div class="card-title">Foto de perfil</div>
+    <div class="card-title">Foto de perfil / Logo</div>
     <div class="avatar-editor">
       <div class="avatar-preview" id="avatar-preview" onclick="document.getElementById('avatar-input').click()">
         <span id="avatar-iniciales">SV</span>
@@ -80,37 +72,113 @@
     <input type="file" id="avatar-input" accept="image/jpeg,image/png" style="display:none" onchange="cargarFoto(this)"/>
   </div>
 
-  <div class="card">
-    <div class="card-title">Información básica</div>
-    <div class="field-group">
-      <div class="field-row">
-        <div class="field"><label>Nombre completo</label><input type="text" id="f-nombre" placeholder="Tu nombre"/></div>
-        <div class="field"><label>Ciudad</label><input type="text" id="f-ciudad" placeholder="Cali, Colombia"/></div>
+  <!-- ══ CANDIDATA ══ -->
+  <div id="form-candidata" style="display:none">
+    <div class="card">
+      <div class="card-title">Información básica</div>
+      <div class="field-group">
+        <div class="field-row">
+          <div class="field"><label>Nombre completo</label><input type="text" id="f-nombre" placeholder="Tu nombre"/></div>
+          <div class="field"><label>Ciudad</label><input type="text" id="f-ciudad" placeholder="Cali, Colombia"/></div>
+        </div>
+        <div class="field"><label>Rol / Profesión</label><input type="text" id="f-rol" placeholder="Ej: Desarrolladora de software"/></div>
+        <div class="field"><label>Descripción / Bio</label><textarea id="f-descripcion" placeholder="Cuéntale a la comunidad quién eres..."></textarea></div>
+        <div class="field"><label>Sitio web</label><input type="text" id="f-website" placeholder="https://miweb.com"/></div>
       </div>
-      <div class="field"><label>Rol / Profesión</label><input type="text" id="f-rol" placeholder="Ej: Desarrolladora de software"/></div>
-      <div class="field"><label>Descripción / Bio</label><textarea id="f-descripcion" placeholder="Cuéntale a la comunidad quién eres..."></textarea></div>
-      <div class="field"><label>Sitio web</label><input type="text" id="f-website" placeholder="https://miweb.com"/></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Lo que ofrezco</div>
+      <div id="servicios-lista"></div>
+      <button class="btn-add" onclick="agregarServicio()">+ Agregar habilidad</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Lo que busco aprender</div>
+      <div id="busca-lista"></div>
+      <button class="btn-add" onclick="agregarBusca()">+ Agregar tema</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Contacto</div>
+      <div class="field-group">
+        <div class="field-row">
+          <div class="field"><label>Instagram</label><input type="text" id="f-instagram" placeholder="tu_usuario (sin @)"/></div>
+          <div class="field"><label>Teléfono</label><input type="text" id="f-telefono" placeholder="3207655665"/></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">Lo que ofrezco</div>
-    <div id="servicios-lista"></div>
-    <button class="btn-add" onclick="agregarServicio()">+ Agregar habilidad</button>
-  </div>
+  <!-- ══ EMPRESA ══ -->
+  <div id="form-empresa" style="display:none">
 
-  <div class="card">
-    <div class="card-title">Lo que busco aprender</div>
-    <div id="busca-lista"></div>
-    <button class="btn-add" onclick="agregarBusca()">+ Agregar tema</button>
-  </div>
+    <div class="card">
+      <div class="card-title">Identidad de la empresa</div>
+      <div class="field-group">
+        <div class="field-row">
+          <div class="field"><label>Nombre comercial</label><input type="text" id="e-nombreEmpresa" placeholder="Ej: TechCorp S.A.S"/></div>
+          <div class="field"><label>Ciudad</label><input type="text" id="e-ciudad" placeholder="Cali, Colombia"/></div>
+        </div>
+        <div class="field">
+          <label>Sector / Industria</label>
+          <select id="e-sector">
+            <option value="">Selecciona un sector</option>
+            <option>Tecnología</option><option>Salud</option><option>Educación</option>
+            <option>Retail / Comercio</option><option>Manufactura</option>
+            <option>Marketing y Publicidad</option><option>Finanzas</option>
+            <option>Construcción</option><option>Logística</option><option>Servicios</option><option>Otro</option>
+          </select>
+        </div>
+        <div class="field"><label>Tamaño de la empresa</label>
+          <select id="e-tamano">
+            <option value="">Selecciona</option>
+            <option>1-10 empleados</option><option>11-50 empleados</option>
+            <option>51-200 empleados</option><option>Más de 200 empleados</option>
+          </select>
+        </div>
+        <div class="field"><label>Descripción / Misión</label><textarea id="e-descripcion" placeholder="¿A qué se dedica tu empresa? ¿Cuál es su misión y valores?"></textarea></div>
+        <div class="field-row">
+          <div class="field"><label>Sitio web</label><input type="text" id="e-website" placeholder="https://miempresa.com"/></div>
+          <div class="field"><label>Instagram</label><input type="text" id="e-instagram" placeholder="empresa_usuario"/></div>
+        </div>
+      </div>
+    </div>
 
-  <div class="card">
-    <div class="card-title">Contacto</div>
-    <div class="field-group">
-      <div class="field-row">
-        <div class="field"><label>Instagram</label><input type="text" id="f-instagram" placeholder="tu_usuario (sin @)"/></div>
-        <div class="field"><label>Número de teléfono</label><input type="text" id="f-telefono" placeholder="3207655665"/></div>
+    <div class="card">
+      <div class="card-title">Representante legal / Contacto</div>
+      <div class="field-group">
+        <div class="field-row">
+          <div class="field"><label>Nombre del representante</label><input type="text" id="e-nombre" placeholder="Nombre completo"/></div>
+          <div class="field"><label>Cargo</label><input type="text" id="e-cargo" placeholder="Ej: Directora de RRHH"/></div>
+        </div>
+        <div class="field"><label>Teléfono de contacto</label><input type="text" id="e-telefono" placeholder="3207655665"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Perfiles de talento que buscas</div>
+      <div class="info-box">
+        💡 Indica qué tipo de talento necesita tu empresa. Esto te ayudará a aparecer en búsquedas de candidatas que ofrezcan esas habilidades.
+      </div>
+      <div id="busca-empresa-lista"></div>
+      <button class="btn-add" onclick="agregarPerfilBuscado()">+ Agregar perfil de talento</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Compromiso con la diversidad</div>
+      <div class="info-box">
+        🌸 SkillHub conecta empresas con mujeres y jóvenes. Cuéntanos cómo tu empresa apoya la inclusión — esto aparece en tu perfil público.
+      </div>
+      <div class="field-group">
+        <div class="field"><label>Políticas de inclusión</label>
+          <textarea id="e-inclusion" placeholder="Ej: Tenemos programa de becas para mujeres en tecnología, horarios flexibles, programa de pasantías para jóvenes..."></textarea>
+        </div>
+        <div class="field"><label>¿Tu empresa tiene programas activos para mujeres o jóvenes?</label>
+          <select id="e-programas">
+            <option value="">Selecciona</option>
+            <option value="si">Sí, tenemos programas activos</option>
+            <option value="en_proceso">Estamos en proceso de implementarlos</option>
+            <option value="no">No actualmente</option>
+          </select>
+        </div>
       </div>
     </div>
   </div>
@@ -127,151 +195,174 @@
   requireAuth();
   const sesion = getUsuario();
   let avatarBase64 = '';
+  let tipoUsuario  = '';
 
   async function cargarPerfil() {
     try {
-      // Siempre carga el perfil propio con /me
-      const p = await obtenerPerfil(null);
-
+      const p = await obtenerMiPerfil();
+      tipoUsuario = p.tipoUsuario;
       document.getElementById('nav-avatar').textContent       = iniciales(p.nombre);
       document.getElementById('avatar-iniciales').textContent = iniciales(p.nombre);
+      if (p.avatar) { avatarBase64 = p.avatar; mostrarFotoEnPreview(p.avatar); }
 
-      document.getElementById('f-nombre').value      = p.nombre      || '';
-      document.getElementById('f-ciudad').value      = p.ciudad      || '';
-      document.getElementById('f-rol').value         = p.rol         || '';
-      document.getElementById('f-descripcion').value = p.descripcion || '';
-      document.getElementById('f-website').value     = p.website     || '';
-      document.getElementById('f-instagram').value   = p.instagram   || '';
-      document.getElementById('f-telefono').value    = p.telefono    || '';
-
-      if (p.avatar) {
-        avatarBase64 = p.avatar;
-        mostrarFotoEnPreview(p.avatar);
+      if (tipoUsuario === 'empresa') {
+        document.getElementById('form-empresa').style.display = 'block';
+        document.getElementById('page-title').textContent = 'Editar perfil de empresa';
+        document.getElementById('page-sub').textContent   = 'Actualiza la información de tu empresa para atraer el talento adecuado.';
+        document.getElementById('e-nombreEmpresa').value  = p.nombreEmpresa || '';
+        document.getElementById('e-ciudad').value         = p.ciudad        || '';
+        document.getElementById('e-sector').value         = p.sectorEmpresa || '';
+        document.getElementById('e-tamano').value         = p.tamanoEmpresa || '';
+        document.getElementById('e-descripcion').value    = p.descripcion   || '';
+        document.getElementById('e-website').value        = p.website       || '';
+        document.getElementById('e-instagram').value      = p.instagram     || '';
+        document.getElementById('e-nombre').value         = p.nombre        || '';
+        document.getElementById('e-cargo').value          = p.rol           || '';
+        document.getElementById('e-telefono').value       = p.telefono      || '';
+        document.getElementById('e-inclusion').value      = p.inclusion     || '';
+        document.getElementById('e-programas').value      = p.programasDiversidad || '';
+        (p.serviciosBusca || []).forEach(b => agregarPerfilBuscado(b));
+      } else {
+        document.getElementById('form-candidata').style.display = 'block';
+        document.getElementById('f-nombre').value      = p.nombre      || '';
+        document.getElementById('f-ciudad').value      = p.ciudad      || '';
+        document.getElementById('f-rol').value         = p.rol         || '';
+        document.getElementById('f-descripcion').value = p.descripcion || '';
+        document.getElementById('f-website').value     = p.website     || '';
+        document.getElementById('f-instagram').value   = p.instagram   || '';
+        document.getElementById('f-telefono').value    = p.telefono    || '';
+        (p.serviciosOfrece || []).forEach(s => agregarServicio(s));
+        (p.serviciosBusca  || []).forEach(b => agregarBusca(b));
       }
-
-      (p.serviciosOfrece || []).forEach(s => agregarServicio(s));
-      (p.serviciosBusca  || []).forEach(b => agregarBusca(b));
-
-    } catch (err) {
-      console.error('Error cargando perfil:', err);
-    }
+    } catch(err) { console.error(err); }
   }
 
   function cargarFoto(input) {
     const file = input.files[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) { alert('La imagen no puede superar 2MB'); return; }
+    if (file.size > 2*1024*1024) { alert('La imagen no puede superar 2MB'); return; }
     const reader = new FileReader();
-    reader.onload = (e) => { avatarBase64 = e.target.result; mostrarFotoEnPreview(avatarBase64); };
+    reader.onload = e => { avatarBase64 = e.target.result; mostrarFotoEnPreview(avatarBase64); };
     reader.readAsDataURL(file);
   }
-
   function mostrarFotoEnPreview(src) {
     document.getElementById('avatar-preview').innerHTML = `<img src="${src}" alt="foto"/>`;
     document.getElementById('btn-remove-avatar').style.display = 'block';
   }
-
   function quitarFoto() {
     avatarBase64 = '';
-    document.getElementById('avatar-preview').innerHTML = `<span id="avatar-iniciales">${iniciales(sesion?.nombre || '')}</span>`;
+    document.getElementById('avatar-preview').innerHTML = `<span id="avatar-iniciales">${iniciales(sesion?.nombre||'')}</span>`;
     document.getElementById('btn-remove-avatar').style.display = 'none';
     document.getElementById('avatar-input').value = '';
   }
 
-  function agregarServicio(datos = {}) {
-    const lista = document.getElementById('servicios-lista');
-    const div = document.createElement('div');
-    div.className = 'servicio-item';
-    div.innerHTML = `
-      <button class="btn-remove" onclick="this.parentElement.remove()" title="Eliminar">✕</button>
+  function agregarServicio(d={}) {
+    const el = document.createElement('div');
+    el.className = 'servicio-item';
+    el.innerHTML = `
+      <button class="btn-remove" onclick="this.parentElement.remove()">✕</button>
       <div class="field-row">
-        <div class="field"><label>Habilidad / Servicio</label><input type="text" class="s-titulo" placeholder="Ej: Programación en Python" value="${datos.titulo || ''}"/></div>
-        <div class="field"><label>Nivel</label>
-          <select class="s-nivel">
-            <option value="">Nivel</option>
-            <option value="Básico"     ${datos.nivel==='Básico'     ?'selected':''}>Básico</option>
-            <option value="Intermedio" ${datos.nivel==='Intermedio' ?'selected':''}>Intermedio</option>
-            <option value="Avanzado"   ${datos.nivel==='Avanzado'   ?'selected':''}>Avanzado</option>
-            <option value="Pro"        ${datos.nivel==='Pro'        ?'selected':''}>Pro</option>
-          </select>
-        </div>
-        <div class="field"><label>Categoría</label>
-          <select class="s-categoria">
-            <option value="">Categoría</option>
-            <option value="Tecnología" ${datos.categoria==='Tecnología'?'selected':''}>Tecnología</option>
-            <option value="Diseño"     ${datos.categoria==='Diseño'    ?'selected':''}>Diseño</option>
-            <option value="Bienestar"  ${datos.categoria==='Bienestar' ?'selected':''}>Bienestar</option>
-            <option value="Finanzas"   ${datos.categoria==='Finanzas'  ?'selected':''}>Finanzas</option>
-            <option value="Idiomas"    ${datos.categoria==='Idiomas'   ?'selected':''}>Idiomas</option>
-            <option value="Marketing"  ${datos.categoria==='Marketing' ?'selected':''}>Marketing</option>
-          </select>
-        </div>
+        <div class="field"><label>Habilidad</label><input type="text" class="s-titulo" placeholder="Ej: Python" value="${d.titulo||''}"/></div>
+        <div class="field"><label>Nivel</label><select class="s-nivel">
+          <option value="">Nivel</option>
+          ${['Básico','Intermedio','Avanzado','Pro'].map(n=>`<option ${d.nivel===n?'selected':''}>${n}</option>`).join('')}
+        </select></div>
+        <div class="field"><label>Categoría</label><select class="s-categoria">
+          <option value="">Categoría</option>
+          ${['Tecnología','Diseño','Bienestar','Finanzas','Idiomas','Marketing'].map(c=>`<option ${d.categoria===c?'selected':''}>${c}</option>`).join('')}
+        </select></div>
       </div>`;
-    lista.appendChild(div);
+    document.getElementById('servicios-lista').appendChild(el);
   }
 
-  function agregarBusca(datos = {}) {
-    const lista = document.getElementById('busca-lista');
-    const div = document.createElement('div');
-    div.className = 'busca-item';
-    div.innerHTML = `
-      <input type="text"   placeholder="Ej: Finanzas personales" value="${datos.titulo || ''}" style="flex:1;background:#f5f4f1;border:1.5px solid transparent;border-radius:10px;padding:11px 14px;font-family:var(--font-body);font-size:0.85rem;color:var(--black);outline:none;"/>
-      <input type="number" placeholder="Año" value="${datos.anio || ''}" style="width:80px;background:#f5f4f1;border:1.5px solid transparent;border-radius:10px;padding:11px 10px;font-family:var(--font-body);font-size:0.85rem;color:var(--black);outline:none;"/>
-      <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--gray-text);font-size:1rem;cursor:pointer;padding:4px 8px;border-radius:6px;">✕</button>`;
-    lista.appendChild(div);
+  function agregarBusca(d={}) {
+    const el = document.createElement('div');
+    el.className = 'busca-item';
+    el.innerHTML = `
+      <input type="text" placeholder="Ej: Finanzas personales" value="${d.titulo||''}" style="flex:1;background:#f5f4f1;border:1.5px solid transparent;border-radius:10px;padding:11px 14px;font-family:var(--font-body);font-size:.85rem;color:var(--black);outline:none;"/>
+      <input type="number" placeholder="Año" value="${d.anio||''}" style="width:80px;background:#f5f4f1;border:1.5px solid transparent;border-radius:10px;padding:11px 10px;font-family:var(--font-body);font-size:.85rem;color:var(--black);outline:none;"/>
+      <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--gray-text);font-size:1rem;cursor:pointer;padding:4px 8px;">✕</button>`;
+    document.getElementById('busca-lista').appendChild(el);
+  }
+
+  function agregarPerfilBuscado(d={}) {
+    const el = document.createElement('div');
+    el.className = 'servicio-item';
+    el.innerHTML = `
+      <button class="btn-remove" onclick="this.parentElement.remove()">✕</button>
+      <div class="field-row">
+        <div class="field"><label>Perfil buscado</label><input type="text" class="pb-titulo" placeholder="Ej: Desarrolladora frontend" value="${d.titulo||''}"/></div>
+        <div class="field"><label>Área</label><select class="pb-area">
+          <option value="">Área</option>
+          ${['Tecnología','Diseño','Bienestar','Finanzas','Idiomas','Marketing','Otro'].map(c=>`<option ${d.anio===c?'selected':''}>${c}</option>`).join('')}
+        </select></div>
+      </div>`;
+    document.getElementById('busca-empresa-lista').appendChild(el);
   }
 
   function recolectarServicios() {
-    return [...document.querySelectorAll('.servicio-item')].map(item => ({
-      titulo:    item.querySelector('.s-titulo').value.trim(),
-      nivel:     item.querySelector('.s-nivel').value,
-      categoria: item.querySelector('.s-categoria').value,
-    })).filter(s => s.titulo);
+    return [...document.querySelectorAll('#servicios-lista .servicio-item')].map(i=>({
+      titulo: i.querySelector('.s-titulo').value.trim(),
+      nivel: i.querySelector('.s-nivel').value,
+      categoria: i.querySelector('.s-categoria').value,
+    })).filter(s=>s.titulo);
   }
-
   function recolectarBusca() {
-    return [...document.querySelectorAll('.busca-item')].map(item => {
-      const inputs = item.querySelectorAll('input');
-      return { titulo: inputs[0].value.trim(), anio: parseInt(inputs[1].value) || null };
-    }).filter(b => b.titulo);
+    return [...document.querySelectorAll('.busca-item')].map(i=>{
+      const ins = i.querySelectorAll('input');
+      return {titulo:ins[0].value.trim(), anio:parseInt(ins[1].value)||null};
+    }).filter(b=>b.titulo);
+  }
+  function recolectarPerfilesBuscados() {
+    return [...document.querySelectorAll('#busca-empresa-lista .servicio-item')].map(i=>({
+      titulo: i.querySelector('.pb-titulo').value.trim(),
+      anio:   i.querySelector('.pb-area').value,
+    })).filter(b=>b.titulo);
   }
 
   async function guardarPerfil() {
     const btn = document.getElementById('btn-guardar');
     setBtnLoading(btn, true, 'Guardar cambios');
+    let datos = { avatar: avatarBase64 };
 
-    const datos = {
-      nombre:          document.getElementById('f-nombre').value.trim(),
-      ciudad:          document.getElementById('f-ciudad').value.trim(),
-      rol:             document.getElementById('f-rol').value.trim(),
-      descripcion:     document.getElementById('f-descripcion').value.trim(),
-      website:         document.getElementById('f-website').value.trim(),
-      instagram:       document.getElementById('f-instagram').value.trim(),
-      telefono:        document.getElementById('f-telefono').value.trim(),
-      serviciosOfrece: recolectarServicios(),
-      serviciosBusca:  recolectarBusca(),
-      avatar:          avatarBase64,
-    };
-
-    try {
-      // actualizarPerfil ya no necesita id, usa /me internamente
-      await actualizarPerfil(datos);
-
-      const status = document.getElementById('save-status');
-      status.classList.add('visible');
-      setTimeout(() => status.classList.remove('visible'), 3000);
-
-      // Actualizar nombre en localStorage si cambió
-      const sesionActual = getUsuario();
-      if (sesionActual) {
-        sesionActual.nombre = datos.nombre;
-        localStorage.setItem('usuario', JSON.stringify(sesionActual));
-      }
-    } catch (err) {
-      alert('Error al guardar: ' + err.message);
-    } finally {
-      setBtnLoading(btn, false, 'Guardar cambios');
+    if (tipoUsuario === 'empresa') {
+      datos = { ...datos,
+        nombre:              document.getElementById('e-nombre').value.trim(),
+        nombreEmpresa:       document.getElementById('e-nombreEmpresa').value.trim(),
+        ciudad:              document.getElementById('e-ciudad').value.trim(),
+        sectorEmpresa:       document.getElementById('e-sector').value,
+        tamanoEmpresa:       document.getElementById('e-tamano').value,
+        descripcion:         document.getElementById('e-descripcion').value.trim(),
+        website:             document.getElementById('e-website').value.trim(),
+        instagram:           document.getElementById('e-instagram').value.trim(),
+        rol:                 document.getElementById('e-cargo').value.trim(),
+        telefono:            document.getElementById('e-telefono').value.trim(),
+        inclusion:           document.getElementById('e-inclusion').value.trim(),
+        programasDiversidad: document.getElementById('e-programas').value,
+        serviciosBusca:      recolectarPerfilesBuscados(),
+      };
+    } else {
+      datos = { ...datos,
+        nombre:          document.getElementById('f-nombre').value.trim(),
+        ciudad:          document.getElementById('f-ciudad').value.trim(),
+        rol:             document.getElementById('f-rol').value.trim(),
+        descripcion:     document.getElementById('f-descripcion').value.trim(),
+        website:         document.getElementById('f-website').value.trim(),
+        instagram:       document.getElementById('f-instagram').value.trim(),
+        telefono:        document.getElementById('f-telefono').value.trim(),
+        serviciosOfrece: recolectarServicios(),
+        serviciosBusca:  recolectarBusca(),
+      };
     }
+    try {
+      await actualizarPerfil(datos);
+      const s = document.getElementById('save-status');
+      s.classList.add('visible');
+      setTimeout(()=>s.classList.remove('visible'), 3000);
+      const u = getUsuario();
+      if (u) { u.nombre = datos.nombre; localStorage.setItem('usuario', JSON.stringify(u)); }
+    } catch(err) { alert('Error al guardar: '+err.message); }
+    finally { setBtnLoading(btn, false, 'Guardar cambios'); }
   }
 
   cargarPerfil();

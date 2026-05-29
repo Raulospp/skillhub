@@ -3,137 +3,133 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SkillHub</title>
+  <title>SkillHub — Banco de Habilidades</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/styles.css"/>
   <style>
-    #screen-landing { display: flex; flex-direction: row; align-items: stretch; min-height: 100vh; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#f0ede8;min-height:100vh;display:flex;flex-direction:column}
 
-    .landing-left {
-      width: 340px;
-      min-width: 300px;
-      background: var(--bg);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 48px 40px 36px;
-    }
+    /* ── Navbar ── */
+    .top-bar{display:flex;align-items:center;padding:20px 48px;gap:16px}
+    .logo-mark{width:44px;height:44px;background:#111;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .logo-mark svg{width:28px;height:28px}
+    .logo-name{font-family:var(--font-display);font-size:1.4rem;color:#111;letter-spacing:-.3px}
+    .top-spacer{flex:1}
+    .btn-register{background:transparent;border:1.5px solid #bbb;border-radius:30px;padding:9px 20px;font-family:var(--font-body);font-size:.85rem;color:#111;cursor:pointer;text-decoration:none;transition:border-color .2s}
+    .btn-register:hover{border-color:#111}
+    .btn-login{background:#111;border:none;border-radius:30px;padding:10px 22px;font-family:var(--font-body);font-size:.85rem;font-weight:500;color:#fff;cursor:pointer;text-decoration:none;transition:background .2s}
+    .btn-login:hover{background:#333}
 
-    .logo-wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-    .logo-icon { width: 52px; height: 52px; }
-    .logo-big { font-family: var(--font-display); font-size: 2.4rem; color: var(--black); letter-spacing: -0.5px; }
+    /* ── Hero ── */
+    .hero{flex:1;display:flex;padding:40px 48px 60px;gap:40px;align-items:center}
+    .hero-left{max-width:420px;flex-shrink:0}
+    .hero-tag{display:inline-flex;align-items:center;gap:6px;background:#e8e4de;border-radius:20px;padding:5px 14px;font-size:.78rem;color:#7a6852;font-weight:500;margin-bottom:24px}
+    .hero-title{font-family:var(--font-display);font-size:3.6rem;color:#111;line-height:1.08;margin-bottom:20px}
+    .hero-title em{color:#a08060;font-style:normal}
+    .hero-sub{font-size:.95rem;color:#666;line-height:1.7;margin-bottom:36px}
+    .hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+    .btn-hero-p{background:#111;color:#fff;border:none;border-radius:12px;padding:14px 28px;font-family:var(--font-body);font-size:.9rem;font-weight:500;cursor:pointer;text-decoration:none}
+    .btn-hero-s{background:#fff;color:#111;border:1.5px solid #ddd;border-radius:12px;padding:13px 24px;font-family:var(--font-body);font-size:.9rem;cursor:pointer;text-decoration:none}
 
-    .landing-cta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--black);
-      border-radius: 40px;
-      padding: 10px 10px 10px 16px;
-    }
+    /* ── Cards flotantes ── */
+    .hero-right{flex:1;position:relative;min-height:420px;display:flex;align-items:center;justify-content:center}
+    .fcard{background:#fff;border-radius:20px;padding:24px 22px;width:280px;box-shadow:0 4px 32px rgba(0,0,0,.08);position:absolute}
+    .fcard-main{left:50%;top:50%;transform:translate(-55%,-52%) rotate(-1.5deg);z-index:2}
+    .fcard-back{right:0;top:50%;transform:translateY(-45%) rotate(2deg);z-index:1;opacity:.92;width:260px}
+    .fcard-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .fcard-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-size:.95rem;flex-shrink:0}
+    .fcard-nombre{font-size:.92rem;font-weight:600;color:#111}
+    .fcard-rol{font-size:.75rem;color:#888;margin-top:2px}
+    .fcard-badge{display:inline-block;background:#f0ede8;border-radius:6px;padding:2px 8px;font-size:.7rem;color:#7a6852;margin-top:4px}
+    .fcard-label{font-size:.68rem;font-weight:600;letter-spacing:.06em;color:#aaa;text-transform:uppercase;margin:12px 0 6px}
+    .fcard-text{font-size:.8rem;color:#555;line-height:1.55}
+    .fcard-exp{font-size:.72rem;color:#aaa;margin-bottom:2px}
+    .fcard-job{font-size:.82rem;font-weight:500;color:#111}
+    .fcard-loc{font-size:.75rem;color:#aaa}
 
-    .cta-label { color: rgba(255,255,255,0.6); font-size: 0.85rem; font-weight: 500; flex: 1; }
+    /* ── Stats bar ── */
+    .stats{display:flex;border-top:1px solid #e0dbd4;background:#f5f2ee}
+    .stat{flex:1;padding:20px 24px;text-align:center;border-right:1px solid #e0dbd4}
+    .stat:last-child{border-right:none}
+    .stat-n{font-family:var(--font-display);font-size:1.4rem;color:#111}
+    .stat-l{font-size:.75rem;color:#888;margin-top:3px}
 
-    .btn-ghost {
-      background: transparent;
-      border: none;
-      color: rgba(255,255,255,0.7);
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      cursor: pointer;
-      padding: 6px 12px;
-      border-radius: 30px;
-      transition: color 0.2s;
-      text-decoration: none;
-    }
-    .btn-ghost:hover { color: #fff; }
-
-    .btn-solid {
-      background: var(--white);
-      color: var(--black);
-      border: none;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      font-weight: 600;
-      padding: 8px 18px;
-      border-radius: 30px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-    .btn-solid:hover { background: #f0ede8; }
-
-    .landing-right {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-      padding: 32px 24px 32px 0;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    @media (max-width: 768px) {
-      #screen-landing { flex-direction: column; }
-      .landing-left { width: 100%; }
-      .landing-right { display: none; }
+    @media(max-width:768px){
+      .hero{flex-direction:column;padding:24px}
+      .hero-right{display:none}
+      .top-bar{padding:16px 24px}
+      .hero-title{font-size:2.6rem}
     }
   </style>
 </head>
 <body>
-<div id="screen-landing">
-  <div class="landing-left">
-    <div class="logo-wrap">
-      <svg class="logo-icon" viewBox="0 0 52 52" fill="none">
-        <rect width="52" height="52" rx="14" fill="#111"/>
-        <text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text>
-      </svg>
-      <span class="logo-big">SkillHub</span>
-    </div>
 
-    <div class="landing-cta">
-      <span class="cta-label">SkillHub</span>
-      <a href="register.html" class="btn-ghost">Regístrate aquí</a>
-      <a href="login.html" class="btn-solid">Inicia sesión</a>
+<div class="top-bar">
+  <div class="logo-mark">
+    <svg viewBox="0 0 28 28" fill="none">
+      <path d="M4 8h8v4H4zM16 8h8v4h-8zM4 16h8v4H4zM16 16h8v4h-8z" fill="white" opacity=".9"/>
+    </svg>
+  </div>
+  <span class="logo-name">SkillHub</span>
+  <div class="top-spacer"></div>
+  <a href="register.html" class="btn-register">Regístrate aquí</a>
+  <a href="login.html"    class="btn-login">Inicia sesión</a>
+</div>
+
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">🌸 Para mujeres y jóvenes</div>
+    <h1 class="hero-title">Tu talento<br/>merece ser<br/><em>reconocido</em></h1>
+    <p class="hero-sub">Comparte tus habilidades, encuentra oportunidades y conecta con empresas que valoran la diversidad.</p>
+    <div class="hero-btns">
+      <a href="register.html" class="btn-hero-p">Crear cuenta gratis</a>
+      <a href="login.html"    class="btn-hero-s">Iniciar sesión</a>
     </div>
   </div>
 
-  <div class="landing-right">
-    <div class="profile-card card-front">
-      <div class="card-header">
-        <div class="avatar-card">SL</div>
+  <div class="hero-right">
+    <div class="fcard fcard-main">
+      <div class="fcard-head">
+        <div class="fcard-av" style="background:linear-gradient(135deg,#c8b8a2,#a08060)">SL</div>
         <div>
-          <div class="card-name">Sara Lawrence</div>
-          <div class="card-role">Diseñadora en San Francisco</div>
-          <span class="card-badge">SkillHub</span>
+          <div class="fcard-nombre">Sara Lawrence</div>
+          <div class="fcard-rol">Diseñadora · San Francisco</div>
+          <span class="fcard-badge">SkillHub</span>
         </div>
       </div>
-      <div class="section-label">Acerca de</div>
-      <p style="font-size:0.8rem;color:#555;line-height:1.55;">Soy una apasionada diseñadora UX que busca crear experiencias intuitivas y atractivas.</p>
-      <div class="section-label">Experiencia</div>
-      <div style="font-size:0.72rem;color:var(--gray-text);margin-bottom:2px;">2017 — Actualidad</div>
-      <div style="font-size:0.82rem;font-weight:500;color:var(--black);">Diseñadora en Empresa ↗</div>
-      <div style="font-size:0.75rem;color:var(--gray-text);">San Francisco, EE.UU.</div>
+      <div class="fcard-label">Acerca de</div>
+      <p class="fcard-text">Soy una apasionada diseñadora UX que busca crear experiencias intuitivas y atractivas.</p>
+      <div class="fcard-label">Experiencia</div>
+      <div class="fcard-exp">2017 — Actualidad</div>
+      <div class="fcard-job">Diseñadora en Empresa ↗</div>
+      <div class="fcard-loc">San Francisco, EE.UU.</div>
     </div>
 
-    <div class="profile-card card-back" style="position:absolute;right:-20px;top:50%;transform:translateY(-50%) rotate(2deg);width:280px;opacity:0.92;z-index:0;">
-      <div class="card-header">
-        <div class="avatar-card" style="background:linear-gradient(135deg,#8090a0,#506070)">AC</div>
+    <div class="fcard fcard-back">
+      <div class="fcard-head">
+        <div class="fcard-av" style="background:linear-gradient(135deg,#8090a0,#506070)">AC</div>
         <div>
-          <div class="card-name">Adam Chen</div>
-          <div class="card-role">Artista en Nueva York</div>
-          <span class="card-badge">SkillHub</span>
+          <div class="fcard-nombre">Adam Chen</div>
+          <div class="fcard-rol">Artista · Nueva York</div>
+          <span class="fcard-badge">SkillHub</span>
         </div>
       </div>
-      <div class="section-label">Acerca de</div>
-      <p style="font-size:0.8rem;color:#555;line-height:1.55;">Artista contemporáneo especializado en técnicas mixtas.</p>
+      <div class="fcard-label">Acerca de</div>
+      <p class="fcard-text">Artista contemporáneo especializado en técnicas mixtas.</p>
     </div>
   </div>
 </div>
 
+<div class="stats">
+  <div class="stat"><div class="stat-n">🌸</div><div class="stat-l">Para mujeres y jóvenes</div></div>
+  <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Gratuito para candidatas</div></div>
+  <div class="stat"><div class="stat-n">💬</div><div class="stat-l">Chat directo con empresas</div></div>
+  <div class="stat"><div class="stat-n">⭐</div><div class="stat-l">Sistema de valoraciones</div></div>
+</div>
+
 <script src="js/api.js"></script>
 <script>
-  // Si ya está logueado, redirigir al home
   if (estaLogueado()) window.location.href = 'home.html';
 </script>
 </body>

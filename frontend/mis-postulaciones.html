@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Mis postulaciones</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    body { background: #f5f4f1; }
+    .page { max-width: 720px; margin: 0 auto; padding: 32px 24px; }
+    .page-title { font-family: var(--font-display); font-size: 1.8rem; color: var(--black); margin-bottom: 6px; }
+    .page-sub { font-size: .85rem; color: var(--gray-text); margin-bottom: 28px; }
+
+    .tabs { display: flex; gap: 4px; background: var(--white); border-radius: 12px; padding: 4px; margin-bottom: 24px; }
+    .tab { flex: 1; padding: 9px; border: none; background: transparent; border-radius: 9px; font-family: var(--font-body); font-size: .85rem; font-weight: 500; color: var(--gray-text); cursor: pointer; transition: all .15s; }
+    .tab.active { background: var(--black); color: var(--white); }
+
+    .p-card { background: var(--white); border-radius: 16px; padding: 20px 22px; margin-bottom: 14px; display: flex; gap: 16px; align-items: flex-start; }
+    .p-icon { width: 44px; height: 44px; border-radius: 10px; background: #f0ede8; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .p-body { flex: 1; }
+    .p-titulo { font-size: .98rem; font-weight: 600; color: var(--black); margin-bottom: 4px; }
+    .p-empresa { font-size: .82rem; color: var(--gray-text); margin-bottom: 8px; }
+    .p-meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: .78rem; color: var(--gray-text); margin-bottom: 10px; }
+    .p-msg { font-size: .82rem; color: #555; font-style: italic; background: #f5f4f1; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; }
+    .p-fecha { font-size: .75rem; color: var(--gray-mid); }
+
+    .estado-badge { font-size: .75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+    .estado-pendiente  { background: #fff8e1; color: #b45309; }
+    .estado-aceptada   { background: #e8f5e9; color: #2e7d32; }
+    .estado-rechazada  { background: #fde8e8; color: #c62828; }
+
+    .btn-ver { background: transparent; border: 1.5px solid var(--gray-mid); border-radius: 8px; padding: 6px 14px; font-family: var(--font-body); font-size: .8rem; cursor: pointer; color: var(--black); text-decoration: none; }
+    .btn-ver:hover { border-color: var(--black); }
+
+    .empty-state { text-align: center; padding: 80px 20px; color: var(--gray-text); }
+    .empty-state .emoji { font-size: 2.5rem; margin-bottom: 12px; }
+    .loading { text-align: center; padding: 40px; color: var(--gray-text); font-size: .9rem; }
+
+    .notif-aceptada { background: #e8f5e9; border-left: 3px solid #2e7d32; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: .85rem; color: #1b5e20; display: none; }
+    .notif-aceptada.visible { display: block; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="home.html" class="navbar-logo">
+    <img src="logo.svg" style="width:24px;height:24px;" alt="SkillHub"/>SkillHub
+  </a>
+  <div class="navbar-spacer"></div>
+  <a href="explore.html"        class="btn-nav">Explorar</a>
+  <a href="solicitudes.html"    class="btn-nav">Solicitudes</a>
+  <a href="notificaciones.html" class="btn-nav">🔔</a>
+  <a href="profile.html" class="avatar-btn"><div class="avatar-inner" id="nav-avatar">??</div></a>
+</nav>
+
+<div class="page">
+  <h1 class="page-title">Mis postulaciones</h1>
+  <p class="page-sub">Ofertas a las que te has postulado y sus respuestas.</p>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-todas"     onclick="filtrar('todas')">Todas</button>
+    <button class="tab"        id="tab-pendiente" onclick="filtrar('pendiente')">Pendientes</button>
+    <button class="tab"        id="tab-aceptada"  onclick="filtrar('aceptada')">Aceptadas ✅</button>
+    <button class="tab"        id="tab-rechazada" onclick="filtrar('rechazada')">Rechazadas</button>
+  </div>
+
+  <div id="lista"><div class="loading">Cargando...</div></div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  requireAuth();
+  let todas = [];
+  let filtroActual = 'todas';
+
+  async function cargar() {
+    try {
+      const perfil = await obtenerMiPerfil();
+      document.getElementById('nav-avatar').textContent = iniciales(perfil.nombre);
+      todas = await obtenerPostulaciones({ candidataId: perfil._id });
+      renderizar();
+    } catch(e) {
+      document.getElementById('lista').innerHTML = `<div class="empty-state"><div class="emoji">⚠️</div><p>${e.message}</p></div>`;
+    }
+  }
+
+  function filtrar(estado) {
+    filtroActual = estado;
+    ['todas','pendiente','aceptada','rechazada'].forEach(t =>
+      document.getElementById('tab-'+t).classList.toggle('active', t === estado)
+    );
+    renderizar();
+  }
+
+  function renderizar() {
+    const lista = filtroActual === 'todas'
+      ? todas
+      : todas.filter(p => p.estado === filtroActual);
+
+    if (!lista.length) {
+      document.getElementById('lista').innerHTML = `
+        <div class="empty-state">
+          <div class="emoji">📋</div>
+          <p>${filtroActual === 'todas' ? 'No te has postulado a ninguna oferta aún' : 'No hay postulaciones en este estado'}</p>
+          <a href="explore.html" style="color:var(--black);font-size:.85rem;margin-top:8px;display:inline-block">Ver ofertas disponibles →</a>
+        </div>`;
+      return;
+    }
+
+    document.getElementById('lista').innerHTML = lista.map(p => {
+      const oferta  = p.ofertaId  || {};
+      const empresa = oferta.empresaId || {};
+      const fecha   = new Date(p.createdAt).toLocaleDateString('es', { day:'numeric', month:'short', year:'numeric' });
+
+      return `
+        <div class="p-card">
+          <div class="p-icon">💼</div>
+          <div class="p-body">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+              <div class="p-titulo">${oferta.titulo || 'Oferta'}</div>
+              <span class="estado-badge estado-${p.estado}">${p.estado}</span>
+            </div>
+            <div class="p-empresa">🏢 ${empresa.nombreEmpresa || empresa.nombre || 'Empresa'} ${oferta.ciudad ? '· 📍 '+oferta.ciudad : ''}</div>
+            <div class="p-meta">
+              ${oferta.modalidad ? `<span>🖥 ${oferta.modalidad}</span>` : ''}
+              ${oferta.categoria ? `<span>🏷 ${oferta.categoria}</span>` : ''}
+            </div>
+            ${p.mensaje ? `<div class="p-msg">"${p.mensaje}"</div>` : ''}
+            ${p.estado === 'aceptada' ? `
+              <div style="background:#e8f5e9;border-radius:8px;padding:10px 14px;font-size:.82rem;color:#1b5e20;margin-bottom:10px;">
+                🎉 ¡Felicitaciones! Tu postulación fue <strong>aceptada</strong>. La empresa puede contactarte pronto.
+              </div>` : ''}
+            ${p.estado === 'rechazada' ? `
+              <div style="background:#fde8e8;border-radius:8px;padding:10px 14px;font-size:.82rem;color:#c62828;margin-bottom:10px;">
+                Tu postulación no fue seleccionada en esta ocasión. ¡Sigue intentando!
+              </div>` : ''}
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+              <div class="p-fecha">Postulado el ${fecha}</div>
+              <a class="btn-ver" href="oferta-detail.html" onclick="sessionStorage.setItem('verOfertaId','${oferta._id}');return true;">Ver oferta</a>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  cargar();
+</script>
+</body>
+</html>

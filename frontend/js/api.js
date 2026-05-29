@@ -71,10 +71,10 @@ async function obtenerMiPerfil() {
 }
 
 async function obtenerPerfil(id) {
-  // Si hay id en la URL → siempre busca ese usuario específico
-  // Si no hay id → busca el perfil propio con /me
-  const url = id ? `${API}/usuarios/${id}` : `${API}/usuarios/me`;
-  const res = await apiFetch(url);
+  // Perfil ajeno: request sin cookie (endpoint público)
+  const res = await fetch(`${API}/usuarios/${id}`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
   return handleResponse(res);
 }
 
@@ -192,6 +192,70 @@ async function crearResena(datos) {
 
 async function obtenerResenas(receptorId) {
   const res = await apiFetch(`${API}/resenas?receptorId=${receptorId}`);
+  return handleResponse(res);
+}
+
+
+// ── SOLICITUDES DE INTERCAMBIO ─────────────────────────────────────────────────
+async function crearSolicitud(receptorId, habilidadOfrece, habilidadBusca, mensaje = '') {
+  const res = await apiFetch(`${API}/solicitudes`, {
+    method: 'POST',
+    body: JSON.stringify({ receptorId, habilidadOfrece, habilidadBusca, mensaje }),
+  });
+  return handleResponse(res);
+}
+
+async function obtenerMisSolicitudes() {
+  const res = await apiFetch(`${API}/solicitudes`);
+  return handleResponse(res);
+}
+
+async function responderSolicitud(id, estado) { // estado: 'aceptada' | 'rechazada'
+  const res = await apiFetch(`${API}/solicitudes/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ estado }),
+  });
+  return handleResponse(res);
+}
+
+// ── NOTIFICACIONES ─────────────────────────────────────────────────────────────
+async function obtenerNotificaciones() {
+  const res = await apiFetch(`${API}/notificaciones`);
+  return handleResponse(res);
+}
+
+async function contarNotificaciones() {
+  const res = await apiFetch(`${API}/notificaciones/count`);
+  return handleResponse(res);
+}
+
+async function marcarTodasLeidas() {
+  const res = await apiFetch(`${API}/notificaciones/leer`, { method: 'PATCH' });
+  return handleResponse(res);
+}
+
+async function marcarNotificacionLeida(id) {
+  const res = await apiFetch(`${API}/notificaciones/${id}/leer`, { method: 'PATCH' });
+  return handleResponse(res);
+}
+
+// ── FAVORITOS ──────────────────────────────────────────────────────────────────
+async function toggleFavorito(referenciaId, tipo) { // tipo: 'oferta' | 'perfil'
+  const res = await apiFetch(`${API}/favoritos/toggle`, {
+    method: 'POST',
+    body: JSON.stringify({ referenciaId, tipo }),
+  });
+  return handleResponse(res);
+}
+
+async function obtenerFavoritos(tipo = '') {
+  const params = tipo ? `?tipo=${tipo}` : '';
+  const res = await apiFetch(`${API}/favoritos${params}`);
+  return handleResponse(res);
+}
+
+async function esFavorito(referenciaId, tipo) {
+  const res = await apiFetch(`${API}/favoritos/check?referenciaId=${referenciaId}&tipo=${tipo}`);
   return handleResponse(res);
 }
 

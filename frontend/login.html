@@ -6,16 +6,60 @@
   <title>SkillHub — Iniciar sesión</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    *{box-sizing:border-box}
+    body{background:#f0ede8;min-height:100vh;display:flex;flex-direction:column}
+    .page{display:flex;min-height:100vh}
+
+    /* ── Izquierda ── */
+    .left{width:420px;min-width:360px;background:#f0ede8;display:flex;flex-direction:column;padding:36px 48px 40px}
+    .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:40px}
+    .logo-mark{width:40px;height:40px;background:#111;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .logo-name{font-family:var(--font-display);font-size:1.25rem;color:#111}
+    .steps{display:flex;gap:6px;margin-bottom:28px}
+    .step-dot{width:28px;height:3px;border-radius:3px;background:#ddd}
+    .step-dot.active{background:#111}
+    .form-title{font-family:var(--font-display);font-size:1.7rem;color:#111;margin-bottom:8px}
+    .form-sub{font-size:.85rem;color:#888;margin-bottom:28px;line-height:1.5}
+    .field{margin-bottom:12px}
+    .field input{width:100%;background:#fff;border:1.5px solid #e0ddd8;border-radius:12px;padding:13px 16px;font-family:var(--font-body);font-size:.88rem;color:#111;outline:none;transition:border-color .2s}
+    .field input:focus{border-color:#111}
+    .btn-submit{width:100%;background:#111;color:#fff;border:none;border-radius:12px;padding:14px;font-family:var(--font-body);font-size:.9rem;font-weight:500;cursor:pointer;margin-top:4px;transition:background .2s}
+    .btn-submit:hover{background:#333}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed}
+    .form-note{font-size:.82rem;color:#888;margin-top:16px;text-align:center}
+    .form-note a{color:#111;font-weight:500}
+    .form-back{display:inline-flex;align-items:center;gap:4px;font-size:.82rem;color:#aaa;text-decoration:none;margin-top:auto;padding-top:24px}
+    .form-back:hover{color:#111}
+    .error-msg{color:#c62828;font-size:.82rem;margin:4px 0 8px;display:none}
+    .error-msg.visible{display:block}
+
+    /* ── Derecha ── */
+    .right{flex:1;display:flex;align-items:center;justify-content:center;padding:40px;position:relative;overflow:hidden}
+    .fcard{background:#fff;border-radius:20px;padding:24px 22px;width:300px;box-shadow:0 4px 32px rgba(0,0,0,.08)}
+    .fcard-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .fcard-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#c8b8a2,#a08060);display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-size:.95rem;flex-shrink:0}
+    .fcard-nombre{font-size:.92rem;font-weight:600;color:#111}
+    .fcard-rol{font-size:.75rem;color:#888;margin-top:2px}
+    .fcard-label{font-size:.68rem;font-weight:600;letter-spacing:.06em;color:#aaa;text-transform:uppercase;margin:12px 0 6px}
+    .fcard-text{font-size:.8rem;color:#555;line-height:1.55}
+
+    @media(max-width:768px){
+      .right{display:none}
+      .left{width:100%;min-width:0;padding:28px 24px}
+    }
+  </style>
 </head>
 <body>
-<div class="form-page">
-  <div class="form-left">
-    <div class="form-logo">
-      <svg width="40" height="40" viewBox="0 0 52 52" fill="none">
-        <rect width="52" height="52" rx="14" fill="#111"/>
-        <text x="26" y="34" text-anchor="middle" fill="white" font-size="20" font-weight="600" font-family="sans-serif">SH</text>
-      </svg>
-      <span class="logo-text">SkillHub</span>
+<div class="page">
+  <div class="left">
+    <div class="logo-row">
+      <div class="logo-mark">
+        <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+          <path d="M4 8h8v4H4zM16 8h8v4h-8zM4 16h8v4H4zM16 16h8v4h-8z" fill="white" opacity=".9"/>
+        </svg>
+      </div>
+      <span class="logo-name">SkillHub</span>
     </div>
 
     <div class="steps">
@@ -24,39 +68,30 @@
     </div>
 
     <div class="form-title">Iniciar sesión</div>
-    <div class="form-subtitle">Introduce tu correo electrónico para iniciar sesión en SkillHub</div>
+    <div class="form-sub">Introduce tu correo electrónico para acceder a tu cuenta en SkillHub.</div>
 
-    <div class="form-fields">
-      <div class="field">
-        <input type="email" id="email" placeholder="email@domain.com" autocomplete="email"/>
-      </div>
-      <div class="field">
-        <input type="password" id="password" placeholder="Contraseña" autocomplete="current-password"/>
-      </div>
-      <p class="error-msg" id="error-login"></p>
-    </div>
+    <div class="field"><input type="email"    id="email"    placeholder="email@dominio.com" autocomplete="email"/></div>
+    <div class="field"><input type="password" id="password" placeholder="Contraseña"        autocomplete="current-password"/></div>
+    <p class="error-msg" id="error-login"></p>
 
     <button class="btn-submit" id="btn-login">Iniciar sesión</button>
 
-    <div class="form-note">
-      ¿No tienes cuenta? <a href="register.html">Regístrate</a>
-    </div>
+    <div class="form-note">¿No tienes cuenta? <a href="register.html">Regístrate</a></div>
 
     <a href="index.html" class="form-back">← Volver</a>
   </div>
 
-  <!-- Lado decorativo -->
-  <div class="form-right" style="position:relative;">
-    <div class="profile-card card-front">
-      <div class="card-header">
-        <div class="avatar-card">SL</div>
+  <div class="right">
+    <div class="fcard">
+      <div class="fcard-head">
+        <div class="fcard-av">SL</div>
         <div>
-          <div class="card-name">Sara Lawrence</div>
-          <div class="card-role">Diseñadora en San Francisco</div>
+          <div class="fcard-nombre">Sara Lawrence</div>
+          <div class="fcard-rol">Diseñadora · San Francisco</div>
         </div>
       </div>
-      <div class="section-label">Acerca de</div>
-      <p style="font-size:0.8rem;color:#555;line-height:1.55;">Diseñadora UX apasionada por crear experiencias intuitivas.</p>
+      <div class="fcard-label">Acerca de</div>
+      <p class="fcard-text">Diseñadora UX apasionada por crear experiencias intuitivas y atractivas.</p>
     </div>
   </div>
 </div>
@@ -67,33 +102,24 @@
 
   const btnLogin = document.getElementById('btn-login');
 
-  btnLogin.addEventListener('click', async () => {
-    const email = document.getElementById('email').value.trim();
+  async function doLogin() {
+    const email    = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
-
     ocultarError('error-login');
-
-    if (!email || !password) {
-      mostrarError('error-login', 'Por favor completa todos los campos');
-      return;
-    }
-
+    if (!email || !password) { mostrarError('error-login','Completa todos los campos'); return; }
     setBtnLoading(btnLogin, true, 'Iniciar sesión');
-
     try {
       await login(email, password);
       window.location.href = 'home.html';
-    } catch (err) {
+    } catch(err) {
       mostrarError('error-login', err.message || 'Email o contraseña incorrectos');
     } finally {
       setBtnLoading(btnLogin, false, 'Iniciar sesión');
     }
-  });
+  }
 
-  // Enter para enviar
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter') btnLogin.click();
-  });
+  btnLogin.addEventListener('click', doLogin);
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 </script>
 </body>
 </html>

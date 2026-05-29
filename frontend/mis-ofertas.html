@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Mis ofertas</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    body { background: #f5f4f1; }
+    .page { max-width: 800px; margin: 0 auto; padding: 32px 24px; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .page-title { font-family: var(--font-display); font-size: 1.8rem; color: var(--black); }
+    .btn-nueva { background: var(--black); color: var(--white); border: none; border-radius: 10px; padding: 10px 22px; font-family: var(--font-body); font-size: .85rem; font-weight: 500; cursor: pointer; text-decoration: none; }
+
+    .oferta-card { background: var(--white); border-radius: 16px; padding: 22px; margin-bottom: 14px; }
+    .oc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .oc-titulo { font-size: .98rem; font-weight: 600; color: var(--black); }
+    .oc-meta { font-size: .78rem; color: var(--gray-text); display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .oc-tag { background: #f0ede8; border-radius: 6px; padding: 2px 8px; font-size: .75rem; }
+    .estado-activa   { background: #e8f5e9; color: #2e7d32; border-radius: 20px; padding: 3px 10px; font-size: .75rem; font-weight: 600; }
+    .estado-cerrada  { background: #f0f0f0; color: #666; border-radius: 20px; padding: 3px 10px; font-size: .75rem; font-weight: 600; }
+    .oc-actions { display: flex; gap: 8px; }
+    .btn-sm { padding: 7px 14px; border-radius: 8px; font-family: var(--font-body); font-size: .8rem; cursor: pointer; border: 1.5px solid var(--gray-mid); background: transparent; color: var(--black); text-decoration: none; }
+    .btn-sm:hover { border-color: var(--black); }
+    .btn-sm.danger { border-color: #ffcccc; color: #c62828; }
+    .btn-sm.danger:hover { background: #fff0f0; }
+    .btn-sm.primary { background: var(--black); color: white; border-color: var(--black); }
+    .postulaciones-count { font-size: .8rem; color: var(--gray-text); display: flex; align-items: center; gap: 4px; }
+    .count-badge { background: var(--black); color: white; border-radius: 20px; padding: 1px 8px; font-size: .75rem; font-weight: 600; }
+
+    /* Panel postulaciones */
+    .panel { display: none; background: #f5f4f1; border-radius: 12px; padding: 16px; margin-top: 14px; }
+    .panel.open { display: block; }
+    .postulante-row { background: var(--white); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; display: flex; gap: 12px; align-items: flex-start; }
+    .p-av { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg,#c8b8a2,#a08060); display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 600; color: white; flex-shrink: 0; overflow: hidden; }
+    .p-av img { width: 100%; height: 100%; object-fit: cover; }
+    .p-body { flex: 1; }
+    .p-nombre { font-size: .9rem; font-weight: 600; color: var(--black); margin-bottom: 2px; }
+    .p-sub { font-size: .78rem; color: var(--gray-text); margin-bottom: 8px; }
+    .p-msg { font-size: .8rem; color: #555; font-style: italic; margin-bottom: 10px; }
+    .p-estado { font-size: .75rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .p-pendiente  { background: #fff8e1; color: #b45309; }
+    .p-aceptada   { background: #e8f5e9; color: #2e7d32; }
+    .p-rechazada  { background: #fde8e8; color: #c62828; }
+    .p-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+    .empty-state { text-align: center; padding: 80px 20px; color: var(--gray-text); }
+    .empty-state .emoji { font-size: 2.5rem; margin-bottom: 12px; }
+    .loading { text-align: center; padding: 40px; color: var(--gray-text); }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="home.html" class="navbar-logo">
+    <img src="logo.svg" style="width:24px;height:24px;" alt="SkillHub"/>SkillHub
+  </a>
+  <div class="navbar-spacer"></div>
+  <a href="explore.html"     class="btn-nav">Explorar</a>
+  <a href="nueva-oferta.html" class="btn-nav">+ Publicar oferta</a>
+  <a href="profile.html" class="avatar-btn"><div class="avatar-inner" id="nav-avatar">??</div></a>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">Mis ofertas</h1>
+    <a href="nueva-oferta.html" class="btn-nueva">+ Nueva oferta</a>
+  </div>
+  <div id="lista"><div class="loading">Cargando...</div></div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  requireAuth();
+  const sesion = getUsuario();
+  if (sesion) document.getElementById('nav-avatar').textContent = iniciales(sesion.nombre);
+  // solo empresas — verificado al cargar perfil
+
+  const miId = sesion?.id || sesion?._id;
+
+  async function cargar() {
+    try {
+      const ofertas = await listarOfertas({ empresaId: miId });
+      if (!ofertas.length) {
+        document.getElementById('lista').innerHTML = `
+          <div class="empty-state">
+            <div class="emoji">📋</div>
+            <p>No has publicado ofertas aún</p>
+            <a href="nueva-oferta.html" style="color:var(--black);font-size:.85rem;margin-top:8px;display:inline-block">Publicar mi primera oferta →</a>
+          </div>`;
+        return;
+      }
+      document.getElementById('lista').innerHTML = ofertas.map(o => `
+        <div class="oferta-card" id="card-${o._id}">
+          <div class="oc-head">
+            <div>
+              <div class="oc-titulo">${o.titulo}</div>
+              <div class="oc-meta">
+                ${o.ciudad    ? `<span>📍 ${o.ciudad}</span>` : ''}
+                ${o.modalidad ? `<span>🖥 ${o.modalidad}</span>` : ''}
+                ${o.categoria ? `<span class="oc-tag">${o.categoria}</span>` : ''}
+                <span>${new Date(o.createdAt).toLocaleDateString('es',{day:'numeric',month:'short'})}</span>
+              </div>
+            </div>
+            <span class="estado-${o.estado}">${o.estado}</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+            <div class="postulaciones-count">
+              👥 Postulantes: <span class="count-badge" id="count-${o._id}">...</span>
+            </div>
+            <div class="oc-actions">
+              <button class="btn-sm" onclick="togglePostulantes('${o._id}')">Ver postulantes</button>
+              <a class="btn-sm primary" href="oferta-detail.html?id=${o._id}" onclick="sessionStorage.setItem('verOfertaId','${o._id}')">Ver oferta</a>
+              ${o.estado === 'activa'
+                ? `<button class="btn-sm danger" onclick="cerrarOferta('${o._id}')">Cerrar</button>`
+                : `<button class="btn-sm" onclick="reabrirOferta('${o._id}')">Reabrir</button>`}
+            </div>
+          </div>
+          <div class="panel" id="panel-${o._id}">
+            <div id="posts-${o._id}"><div class="loading">Cargando postulantes...</div></div>
+          </div>
+        </div>`).join('');
+
+      // Cargar conteos
+      ofertas.forEach(async o => {
+        const posts = await obtenerPostulaciones({ ofertaId: o._id });
+        document.getElementById('count-'+o._id).textContent = posts.length;
+      });
+    } catch(e) {
+      document.getElementById('lista').innerHTML = `<div class="empty-state"><div class="emoji">⚠️</div><p>${e.message}</p></div>`;
+    }
+  }
+
+  async function togglePostulantes(ofertaId) {
+    const panel = document.getElementById('panel-'+ofertaId);
+    const isOpen = panel.classList.contains('open');
+    panel.classList.toggle('open');
+    if (!isOpen) cargarPostulantes(ofertaId);
+  }
+
+  async function cargarPostulantes(ofertaId) {
+    const el = document.getElementById('posts-'+ofertaId);
+    try {
+      const posts = await obtenerPostulaciones({ ofertaId });
+      if (!posts.length) { el.innerHTML = '<p style="font-size:.83rem;color:var(--gray-text);text-align:center;padding:16px;">Sin postulantes aún</p>'; return; }
+      el.innerHTML = posts.map(p => {
+        const c = p.candidataId || {};
+        const av = c.avatar ? `<img src="${c.avatar}"/>` : iniciales(c.nombre||'?');
+        return `
+          <div class="postulante-row">
+            <div class="p-av">${av}</div>
+            <div class="p-body">
+              <div class="p-nombre"><a href="profile.html" onclick="sessionStorage.setItem('verPerfilId','${c._id}');return true;" style="color:inherit;text-decoration:none">${c.nombre||'Candidata'}</a></div>
+              <div class="p-sub">${c.rol||''} ${c.ciudad?'· '+c.ciudad:''}</div>
+              ${p.mensaje ? `<div class="p-msg">"${p.mensaje}"</div>` : ''}
+              <span class="p-estado p-${p.estado}">${p.estado}</span>
+              ${p.estado === 'pendiente' ? `
+                <div class="p-actions">
+                  <button class="btn-sm primary" onclick="cambiarEstado('${p._id}','aceptada','${ofertaId}')">Aceptar</button>
+                  <button class="btn-sm danger"  onclick="cambiarEstado('${p._id}','rechazada','${ofertaId}')">Rechazar</button>
+                </div>` : ''}
+            </div>
+          </div>`;
+      }).join('');
+    } catch(e) { el.innerHTML = `<p style="color:#c62828;font-size:.82rem;padding:10px">${e.message}</p>`; }
+  }
+
+  async function cambiarEstado(postId, estado, ofertaId) {
+    try {
+      await cambiarEstadoPostulacion(postId, estado);
+      cargarPostulantes(ofertaId);
+    } catch(e) { alert(e.message); }
+  }
+
+  async function cerrarOferta(id) {
+    if (!confirm('¿Cerrar esta oferta? Las candidatas ya no podrán postularse.')) return;
+    try { await actualizarOferta(id, { estado: 'cerrada' }); cargar(); } catch(e) { alert(e.message); }
+  }
+
+  async function reabrirOferta(id) {
+    try { await actualizarOferta(id, { estado: 'activa' }); cargar(); } catch(e) { alert(e.message); }
+  }
+
+  cargar();
+</script>
+</body>
+</html>

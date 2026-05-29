@@ -7,29 +7,37 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/styles.css"/>
   <style>
-    .role-selector { display: flex; gap: 10px; margin-top: 24px; }
-    .role-card {
-      flex: 1; border: 2px solid var(--gray-mid); border-radius: 12px;
-      padding: 16px 14px; cursor: pointer; transition: all 0.2s; text-align: center;
-      background: var(--white);
+    .role-selector{display:flex;gap:10px;margin-top:24px}
+    .role-card{flex:1;border:2px solid var(--gray-mid);border-radius:12px;padding:16px 14px;cursor:pointer;transition:all .2s;text-align:center;background:var(--white)}
+    .role-card:hover{border-color:var(--black)}
+    .role-card.selected{border-color:var(--black);background:#f5f4f1}
+    .role-card input{display:none}
+    .role-icon{font-size:1.6rem;margin-bottom:6px}
+    .role-title{font-size:.88rem;font-weight:600;color:var(--black)}
+    .role-desc{font-size:.75rem;color:var(--gray-text);margin-top:2px}
+    .genero-options{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+    .genero-chip{padding:6px 14px;border-radius:20px;font-size:.8rem;cursor:pointer;border:1.5px solid var(--gray-mid);background:var(--white);color:var(--gray-text);font-family:var(--font-body);transition:all .15s}
+    .genero-chip.selected{background:var(--black);color:white;border-color:var(--black)}
+    .step-form{display:none}
+    .step-form.active{display:block}
+    .step-title{font-size:1.1rem;font-weight:600;color:var(--black);margin:20px 0 16px}
+    .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+    .field-full{margin-bottom:10px}
+    .field-full input,.field-full textarea,.field-full select,
+    .field-grid .field-half input,.field-grid .field-half select{
+      width:100%;background:#f5f4f1;border:1.5px solid transparent;border-radius:10px;
+      padding:12px 14px;font-family:var(--font-body);font-size:.85rem;color:var(--black);outline:none;
+      transition:border-color .2s,background .2s
     }
-    .role-card:hover { border-color: var(--black); }
-    .role-card.selected { border-color: var(--black); background: #f5f4f1; }
-    .role-card input { display: none; }
-    .role-icon { font-size: 1.6rem; margin-bottom: 6px; }
-    .role-title { font-size: 0.88rem; font-weight: 600; color: var(--black); }
-    .role-desc  { font-size: 0.75rem; color: var(--gray-text); margin-top: 2px; }
-
-    .genero-options { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-    .genero-chip {
-      padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;
-      border: 1.5px solid var(--gray-mid); background: var(--white); color: var(--gray-text);
-      font-family: var(--font-body); transition: all 0.15s;
-    }
-    .genero-chip.selected { background: var(--black); color: white; border-color: var(--black); }
-
-    .empresa-fields { display: none; margin-top: 10px; }
-    .empresa-fields.visible { display: flex; flex-direction: column; gap: 10px; }
+    .field-full textarea{resize:vertical;min-height:80px}
+    .field-full input:focus,.field-full select:focus,.field-full textarea:focus,
+    .field-grid .field-half input:focus,.field-grid .field-half select:focus{border-color:var(--black);background:#fff}
+    .field-label{font-size:.78rem;color:var(--gray-text);font-weight:500;margin-bottom:5px;display:block}
+    .info-box{background:#f0f7ff;border-left:3px solid #2563eb;border-radius:8px;padding:10px 14px;font-size:.8rem;color:#1e3a5f;line-height:1.5;margin-bottom:14px}
+    .btn-next{width:100%;background:var(--black);color:var(--white);border:none;border-radius:10px;padding:13px;font-family:var(--font-body);font-size:.9rem;font-weight:500;cursor:pointer;margin-top:8px}
+    .btn-back{width:100%;background:transparent;border:1.5px solid var(--gray-mid);border-radius:10px;padding:11px;font-family:var(--font-body);font-size:.85rem;cursor:pointer;margin-top:6px;color:var(--black)}
+    .progress-bar{height:3px;background:#e0ddd8;border-radius:3px;margin:16px 0}
+    .progress-fill{height:100%;background:var(--black);border-radius:3px;transition:width .3s}
   </style>
 </head>
 <body>
@@ -41,75 +49,92 @@
     </div>
 
     <div class="steps">
-      <div class="step-dot active"></div>
-      <div class="step-dot"></div>
-      <div class="step-dot"></div>
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:33%"></div></div>
+
+    <!-- PASO 1: Tipo de cuenta -->
+    <div class="step-form active" id="step-1">
+      <div class="form-title">Crear una cuenta</div>
+      <div class="form-subtitle">¿Cómo quieres usar SkillHub?</div>
+      <div class="role-selector">
+        <label class="role-card" id="card-candidata" onclick="seleccionarRol('candidata')">
+          <input type="radio" name="rol" value="candidata"/>
+          <div class="role-icon">👩‍💼</div>
+          <div class="role-title">Soy candidata</div>
+          <div class="role-desc">Busco trabajo u oportunidades de intercambio</div>
+        </label>
+        <label class="role-card" id="card-empresa" onclick="seleccionarRol('empresa')">
+          <input type="radio" name="rol" value="empresa"/>
+          <div class="role-icon">🏢</div>
+          <div class="role-title">Soy empresa</div>
+          <div class="role-desc">Publico ofertas y busco talento</div>
+        </label>
+      </div>
+      <p class="error-msg" id="error-1" style="margin-top:12px"></p>
+      <button class="btn-next" onclick="irPaso2()">Continuar →</button>
+      <div class="form-note" style="margin-top:12px">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></div>
     </div>
 
-    <div class="form-title">Crear una cuenta</div>
-    <div class="form-subtitle">¿Cómo quieres usar SkillHub?</div>
-
-    <!-- Selector de rol -->
-    <div class="role-selector">
-      <label class="role-card" id="card-candidata" onclick="seleccionarRol('candidata')">
-        <input type="radio" name="rol" value="candidata"/>
-        <div class="role-icon">👩‍💼</div>
-        <div class="role-title">Soy candidata</div>
-        <div class="role-desc">Busco trabajo u oportunidades</div>
-      </label>
-      <label class="role-card" id="card-empresa" onclick="seleccionarRol('empresa')">
-        <input type="radio" name="rol" value="empresa"/>
-        <div class="role-icon">🏢</div>
-        <div class="role-title">Soy empresa</div>
-        <div class="role-desc">Quiero publicar ofertas</div>
-      </label>
-    </div>
-
-    <div class="form-fields" style="margin-top:16px">
-
-      <!-- Campos básicos -->
-      <div class="field"><input type="text"  id="nombre"   placeholder="Nombre completo"/></div>
-      <div class="field"><input type="email" id="email"    placeholder="email@domain.com"/></div>
-      <div class="field"><input type="password" id="password"  placeholder="Contraseña (mín. 6 caracteres)"/></div>
-      <div class="field"><input type="password" id="confirmar" placeholder="Confirmar contraseña"/></div>
-
-      <!-- Género (solo candidatas) -->
-      <div id="genero-section" style="display:none">
-        <div style="font-size:0.78rem;color:var(--gray-text);margin-bottom:6px;font-weight:500;">Me identifico como</div>
+    <!-- PASO 2a: Datos candidata -->
+    <div class="step-form" id="step-2-candidata">
+      <div class="step-title">Tus datos personales</div>
+      <div class="field-full"><span class="field-label">Nombre completo</span><input type="text" id="c-nombre" placeholder="Ana García"/></div>
+      <div class="field-full"><span class="field-label">Email</span><input type="email" id="c-email" placeholder="ana@email.com"/></div>
+      <div class="field-full"><span class="field-label">Contraseña</span><input type="password" id="c-password" placeholder="Mínimo 6 caracteres"/></div>
+      <div class="field-full"><span class="field-label">Confirmar contraseña</span><input type="password" id="c-confirmar" placeholder="Repite tu contraseña"/></div>
+      <div style="margin-top:6px">
+        <span class="field-label">Me identifico como</span>
         <div class="genero-options">
           <button type="button" class="genero-chip" onclick="seleccionarGenero(this,'mujer')">Mujer</button>
           <button type="button" class="genero-chip" onclick="seleccionarGenero(this,'joven')">Joven (18-29)</button>
           <button type="button" class="genero-chip" onclick="seleccionarGenero(this,'otro')">Prefiero no decir</button>
         </div>
       </div>
+      <p class="error-msg" id="error-2c"></p>
+      <button class="btn-next" onclick="registrarCandidata()" style="margin-top:16px">Crear cuenta</button>
+      <button class="btn-back" onclick="irPaso1()">← Volver</button>
+    </div>
 
-      <!-- Campos empresa -->
-      <div class="empresa-fields" id="empresa-fields">
-        <div class="field"><input type="text" id="nombreEmpresa" placeholder="Nombre de la empresa"/></div>
-        <div class="field">
-          <select id="sectorEmpresa" style="width:100%;background:#fff;border:1.5px solid var(--gray-mid);border-radius:10px;padding:13px 16px;font-family:var(--font-body);font-size:0.85rem;color:var(--black);outline:none;">
-            <option value="">Sector de la empresa</option>
-            <option>Tecnología</option>
-            <option>Salud</option>
-            <option>Educación</option>
-            <option>Retail / Comercio</option>
-            <option>Manufactura</option>
-            <option>Servicios</option>
-            <option>Otro</option>
-          </select>
-        </div>
+    <!-- PASO 2b: Datos empresa paso 1 -->
+    <div class="step-form" id="step-2-empresa">
+      <div class="step-title">Datos de acceso</div>
+      <div class="field-full"><span class="field-label">Email corporativo</span><input type="email" id="e-email" placeholder="contacto@empresa.com"/></div>
+      <div class="field-full"><span class="field-label">Contraseña</span><input type="password" id="e-password" placeholder="Mínimo 6 caracteres"/></div>
+      <div class="field-full"><span class="field-label">Confirmar contraseña</span><input type="password" id="e-confirmar" placeholder="Repite tu contraseña"/></div>
+      <p class="error-msg" id="error-2e"></p>
+      <button class="btn-next" onclick="irPaso3Empresa()">Siguiente →</button>
+      <button class="btn-back" onclick="irPaso1()">← Volver</button>
+    </div>
+
+    <!-- PASO 3: Info empresa -->
+    <div class="step-form" id="step-3-empresa">
+      <div class="step-title">Información de tu empresa</div>
+      <div class="field-grid">
+        <div class="field-half"><span class="field-label">Nombre comercial</span><input type="text" id="e-nombre-empresa" placeholder="TechCorp S.A.S"/></div>
+        <div class="field-half"><span class="field-label">Ciudad</span><input type="text" id="e-ciudad" placeholder="Cali"/></div>
       </div>
-
-      <p class="error-msg" id="error-reg"></p>
+      <div class="field-full"><span class="field-label">Sector / Industria</span>
+        <select id="e-sector">
+          <option value="">Selecciona un sector</option>
+          <option>Tecnología</option><option>Salud</option><option>Educación</option>
+          <option>Retail / Comercio</option><option>Manufactura</option>
+          <option>Marketing y Publicidad</option><option>Finanzas</option>
+          <option>Construcción</option><option>Logística</option><option>Servicios</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="field-grid">
+        <div class="field-half"><span class="field-label">Nombre del representante</span><input type="text" id="e-representante" placeholder="María López"/></div>
+        <div class="field-half"><span class="field-label">Cargo</span><input type="text" id="e-cargo" placeholder="Directora RRHH"/></div>
+      </div>
+      <div class="field-full"><span class="field-label">Sitio web</span><input type="text" id="e-website" placeholder="https://miempresa.com"/></div>
+      <div class="info-box">🌸 SkillHub está enfocado en conectar empresas con mujeres y jóvenes. Tu empresa aparecerá como aliada de la diversidad.</div>
+      <p class="error-msg" id="error-3e"></p>
+      <button class="btn-next" onclick="registrarEmpresa()">Crear cuenta empresa</button>
+      <button class="btn-back" onclick="irPaso2Empresa()">← Volver</button>
     </div>
-
-    <button class="btn-submit" id="btn-register" onclick="registrar()">Siguiente paso</button>
-
-    <div class="form-note">
-      ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
-    </div>
-
-    <a href="index.html" class="form-back">← Volver</a>
   </div>
 
   <div class="form-right" style="position:relative;">
@@ -118,11 +143,11 @@
         <div class="avatar-card">SL</div>
         <div>
           <div class="card-name">Sara Lawrence</div>
-          <div class="card-role">Candidata · San Francisco</div>
+          <div class="card-role">Candidata · Cali</div>
         </div>
       </div>
       <div class="section-label">Acerca de</div>
-      <p style="font-size:0.8rem;color:#555;line-height:1.55;">Diseñadora UX buscando nuevas oportunidades en tecnología.</p>
+      <p style="font-size:.8rem;color:#555;line-height:1.55;">Diseñadora UX buscando nuevas oportunidades en tecnología.</p>
     </div>
   </div>
 </div>
@@ -134,12 +159,16 @@
   let tipoSeleccionado = '';
   let generoSeleccionado = '';
 
+  function setStep(n) {
+    document.querySelectorAll('.step-form').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.step-dot').forEach((d,i) => d.classList.toggle('active', i < n));
+    document.getElementById('progress').style.width = (n/3*100)+'%';
+  }
+
   function seleccionarRol(tipo) {
     tipoSeleccionado = tipo;
-    document.getElementById('card-candidata').classList.toggle('selected', tipo === 'candidata');
-    document.getElementById('card-empresa').classList.toggle('selected',  tipo === 'empresa');
-    document.getElementById('genero-section').style.display  = tipo === 'candidata' ? 'block' : 'none';
-    document.getElementById('empresa-fields').classList.toggle('visible', tipo === 'empresa');
+    document.getElementById('card-candidata').classList.toggle('selected', tipo==='candidata');
+    document.getElementById('card-empresa').classList.toggle('selected', tipo==='empresa');
   }
 
   function seleccionarGenero(el, val) {
@@ -148,32 +177,78 @@
     el.classList.add('selected');
   }
 
-  async function registrar() {
-    const nombre    = document.getElementById('nombre').value.trim();
-    const email     = document.getElementById('email').value.trim();
-    const password  = document.getElementById('password').value;
-    const confirmar = document.getElementById('confirmar').value;
+  function irPaso1() {
+    setStep(1);
+    document.getElementById('step-1').classList.add('active');
+  }
 
-    ocultarError('error-reg');
+  function irPaso2() {
+    if (!tipoSeleccionado) { mostrarError('error-1','Selecciona si eres candidata o empresa'); return; }
+    ocultarError('error-1');
+    setStep(2);
+    if (tipoSeleccionado === 'candidata') document.getElementById('step-2-candidata').classList.add('active');
+    else document.getElementById('step-2-empresa').classList.add('active');
+  }
 
-    if (!tipoSeleccionado) { mostrarError('error-reg', 'Selecciona si eres candidata o empresa'); return; }
-    if (!nombre || !email || !password) { mostrarError('error-reg', 'Completa todos los campos'); return; }
-    if (password !== confirmar)  { mostrarError('error-reg', 'Las contraseñas no coinciden'); return; }
-    if (password.length < 6)     { mostrarError('error-reg', 'Mínimo 6 caracteres'); return; }
+  function irPaso3Empresa() {
+    const email    = document.getElementById('e-email').value.trim();
+    const password = document.getElementById('e-password').value;
+    const confirmar= document.getElementById('e-confirmar').value;
+    ocultarError('error-2e');
+    if (!email||!password)         { mostrarError('error-2e','Completa todos los campos'); return; }
+    if (password !== confirmar)    { mostrarError('error-2e','Las contraseñas no coinciden'); return; }
+    if (password.length < 6)       { mostrarError('error-2e','Mínimo 6 caracteres'); return; }
+    setStep(3);
+    document.getElementById('step-3-empresa').classList.add('active');
+  }
 
-    const btn = document.getElementById('btn-register');
-    setBtnLoading(btn, true, 'Siguiente paso');
+  function irPaso2Empresa() {
+    setStep(2);
+    document.getElementById('step-2-empresa').classList.add('active');
+  }
 
+  async function registrarCandidata() {
+    const nombre    = document.getElementById('c-nombre').value.trim();
+    const email     = document.getElementById('c-email').value.trim();
+    const password  = document.getElementById('c-password').value;
+    const confirmar = document.getElementById('c-confirmar').value;
+    ocultarError('error-2c');
+    if (!nombre||!email||!password) { mostrarError('error-2c','Completa todos los campos'); return; }
+    if (password !== confirmar)      { mostrarError('error-2c','Las contraseñas no coinciden'); return; }
+    if (password.length < 6)         { mostrarError('error-2c','Mínimo 6 caracteres'); return; }
     try {
-      const usuario = await registro(nombre, email, password, tipoSeleccionado, generoSeleccionado);
-      sessionStorage.setItem('nuevo_usuario_id',    usuario._id);
-      sessionStorage.setItem('nuevo_tipo_usuario',  tipoSeleccionado);
+      const u = await registro(nombre, email, password, 'candidata', generoSeleccionado);
+      sessionStorage.setItem('nuevo_usuario_id',''+u._id);
+      sessionStorage.setItem('nuevo_tipo_usuario','candidata');
       window.location.href = 'identity.html';
-    } catch (err) {
-      mostrarError('error-reg', err.message || 'Error al crear la cuenta');
-    } finally {
-      setBtnLoading(btn, false, 'Siguiente paso');
-    }
+    } catch(err) { mostrarError('error-2c', err.message||'Error al crear la cuenta'); }
+  }
+
+  async function registrarEmpresa() {
+    const nombreEmpresa  = document.getElementById('e-nombre-empresa').value.trim();
+    const ciudad         = document.getElementById('e-ciudad').value.trim();
+    const sector         = document.getElementById('e-sector').value;
+    const representante  = document.getElementById('e-representante').value.trim();
+    const email          = document.getElementById('e-email').value.trim();
+    const password       = document.getElementById('e-password').value;
+    ocultarError('error-3e');
+    if (!nombreEmpresa||!representante) { mostrarError('error-3e','Completa nombre de empresa y representante'); return; }
+    try {
+      // Registramos con el nombre del representante como nombre principal
+      const u = await registro(representante, email, password, 'empresa', '');
+      // Luego hacemos login y actualizamos con los datos de empresa
+      await login(email, password);
+      await actualizarPerfil({
+        nombreEmpresa,
+        ciudad,
+        sectorEmpresa: sector,
+        rol: document.getElementById('e-cargo').value.trim(),
+        website: document.getElementById('e-website').value.trim(),
+      });
+      sessionStorage.setItem('nuevo_usuario_id',''+u._id);
+      sessionStorage.setItem('nuevo_tipo_usuario','empresa');
+      window.location.href = 'home.html';
+    } catch(err) { mostrarError('error-3e', err.message||'Error al crear la cuenta'); }
   }
 </script>
 </body>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Solicitudes</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    body { background: var(--bg); }
+    .page { max-width: 720px; margin: 0 auto; padding: 32px 24px; }
+    .page-title { font-family: var(--font-display); font-size: 1.8rem; color: var(--black); margin-bottom: 6px; }
+    .page-sub { font-size: 0.85rem; color: var(--gray-text); margin-bottom: 28px; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 4px; background: var(--white); border-radius: 12px; padding: 4px; margin-bottom: 24px; }
+    .tab { flex: 1; padding: 9px; border: none; background: transparent; border-radius: 9px; font-family: var(--font-body); font-size: 0.85rem; font-weight: 500; color: var(--gray-text); cursor: pointer; transition: all .15s; }
+    .tab.active { background: var(--black); color: var(--white); }
+
+    /* Card solicitud */
+    .s-card { background: var(--white); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; display: flex; gap: 16px; align-items: flex-start; }
+    .s-av { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,#c8b8a2,#a08060); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; color: white; flex-shrink: 0; }
+    .s-av img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+    .s-body { flex: 1; }
+    .s-nombre { font-size: 0.95rem; font-weight: 600; color: var(--black); margin-bottom: 4px; }
+    .s-intercambio { font-size: 0.82rem; color: var(--gray-text); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .s-badge { background: #f0ede8; border-radius: 6px; padding: 3px 9px; font-size: 0.78rem; font-weight: 500; color: var(--black); }
+    .s-arrow { font-size: 1rem; color: var(--gray-text); }
+    .s-msg { font-size: 0.82rem; color: var(--gray-text); font-style: italic; margin-bottom: 12px; }
+    .s-fecha { font-size: 0.75rem; color: var(--gray-mid); margin-bottom: 10px; }
+    .s-actions { display: flex; gap: 8px; }
+    .btn-aceptar { background: var(--black); color: var(--white); border: none; border-radius: 8px; padding: 7px 18px; font-family: var(--font-body); font-size: 0.82rem; font-weight: 500; cursor: pointer; }
+    .btn-rechazar { background: transparent; border: 1.5px solid var(--gray-mid); color: var(--black); border-radius: 8px; padding: 7px 18px; font-family: var(--font-body); font-size: 0.82rem; cursor: pointer; }
+    .estado-badge { font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+    .estado-pendiente  { background: #fff8e1; color: #b45309; }
+    .estado-aceptada   { background: #e8f5e9; color: #2e7d32; }
+    .estado-rechazada  { background: #fde8e8; color: #c62828; }
+
+    /* Modal nueva solicitud */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: 20px; padding: 32px; width: 420px; max-width: 92vw; }
+    .modal h3 { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 20px; }
+    .modal label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--black); margin-bottom: 6px; }
+    .modal input, .modal textarea, .modal select {
+      width: 100%; border: 1.5px solid var(--gray-mid); border-radius: 10px; padding: 10px 14px;
+      font-family: var(--font-body); font-size: 0.85rem; color: var(--black); outline: none; margin-bottom: 14px; background: var(--white);
+    }
+    .modal textarea { resize: vertical; min-height: 80px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 4px; }
+    .btn-cancel { flex: 1; background: transparent; border: 1.5px solid var(--gray-mid); border-radius: 10px; padding: 10px; font-family: var(--font-body); font-size: 0.85rem; cursor: pointer; }
+    .btn-send   { flex: 2; background: var(--black); color: var(--white); border: none; border-radius: 10px; padding: 10px; font-family: var(--font-body); font-size: 0.85rem; font-weight: 500; cursor: pointer; }
+
+    .btn-nueva { background: var(--black); color: var(--white); border: none; border-radius: 10px; padding: 10px 22px; font-family: var(--font-body); font-size: 0.85rem; font-weight: 500; cursor: pointer; }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-text); }
+    .empty-state .emoji { font-size: 2.5rem; margin-bottom: 12px; }
+    .loading { text-align: center; padding: 40px; color: var(--gray-text); font-size: 0.9rem; }
+    .error-msg { color: #c62828; font-size: 0.82rem; margin-top: -10px; margin-bottom: 10px; display: none; }
+    .error-msg.visible { display: block; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="home.html" class="navbar-logo">
+    <img src="logo.svg" style="width:24px;height:24px;" alt="SkillHub"/>
+    SkillHub
+  </a>
+  <div class="navbar-spacer"></div>
+  <a href="explore.html" class="btn-nav">Explorar</a>
+  <a href="notificaciones.html" class="btn-nav">Notificaciones</a>
+  <a href="favoritos.html" class="btn-nav">Guardados</a>
+  <a href="profile.html" class="avatar-btn">
+    <div class="avatar-inner" id="nav-avatar">??</div>
+  </a>
+</nav>
+
+<div class="page">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+    <h1 class="page-title">Solicitudes de intercambio</h1>
+    <button class="btn-nueva" onclick="abrirModal()">+ Nueva</button>
+  </div>
+  <p class="page-sub">Propón o responde intercambios de habilidades con otras personas.</p>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-recibidas" onclick="cambiarTab('recibidas')">Recibidas</button>
+    <button class="tab"        id="tab-enviadas"  onclick="cambiarTab('enviadas')">Enviadas</button>
+  </div>
+
+  <div id="lista"><div class="loading">Cargando...</div></div>
+</div>
+
+<!-- Modal nueva solicitud -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3>Proponer intercambio</h3>
+    <label>¿Con quién? (ID del usuario)</label>
+    <input id="m-receptor" type="text" placeholder="Pega el ID del perfil"/>
+    <label>¿Qué ofreces?</label>
+    <input id="m-ofrece" type="text" placeholder="Ej: Clases de diseño UX"/>
+    <label>¿Qué buscas?</label>
+    <input id="m-busca" type="text" placeholder="Ej: Asesoría en marketing"/>
+    <label>Mensaje (opcional)</label>
+    <textarea id="m-mensaje" placeholder="Cuéntale por qué quieres intercambiar..."></textarea>
+    <div class="error-msg" id="m-error"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-send"   onclick="enviarSolicitud()">Enviar solicitud</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  requireAuth();
+  let miId = null;
+  let tabActual = 'recibidas';
+  let todasSolicitudes = [];
+
+  // Obtener ID real desde el backend
+  obtenerMiPerfil().then(p => {
+    miId = p._id || p.id;
+    document.getElementById('nav-avatar').textContent = iniciales(p.nombre);
+    cargar();
+  }).catch(() => cargar());
+
+  async function cargar() {
+    document.getElementById('lista').innerHTML = '<div class="loading">Cargando...</div>';
+    try {
+      todasSolicitudes = await obtenerMisSolicitudes();
+      renderizar();
+    } catch (e) {
+      document.getElementById('lista').innerHTML = `<div class="empty-state"><div class="emoji">⚠️</div><p>${e.message}</p></div>`;
+    }
+  }
+
+  function cambiarTab(tab) {
+    tabActual = tab;
+    document.getElementById('tab-recibidas').classList.toggle('active', tab === 'recibidas');
+    document.getElementById('tab-enviadas').classList.toggle('active',  tab === 'enviadas');
+    renderizar();
+  }
+
+  function renderizar() {
+    const filtradas = todasSolicitudes.filter(s => {
+      const receptorId    = s.receptorId?._id    || s.receptorId;
+      const solicitanteId = s.solicitanteId?._id || s.solicitanteId;
+      return tabActual === 'recibidas'
+        ? String(receptorId)    === String(miId)
+        : String(solicitanteId) === String(miId);
+    });
+
+    if (!filtradas.length) {
+      document.getElementById('lista').innerHTML = `
+        <div class="empty-state">
+          <div class="emoji">${tabActual === 'recibidas' ? '📬' : '📤'}</div>
+          <p>${tabActual === 'recibidas' ? 'No tienes solicitudes recibidas' : 'No has enviado solicitudes aún'}</p>
+        </div>`;
+      return;
+    }
+
+    document.getElementById('lista').innerHTML = filtradas.map(s => {
+      const esRecibida = tabActual === 'recibidas';
+      const otro = esRecibida ? s.solicitanteId : s.receptorId;
+      const av = otro?.avatar
+        ? `<img src="${otro.avatar}" alt=""/>`
+        : iniciales(otro?.nombre || '?');
+      const fecha = new Date(s.createdAt).toLocaleDateString('es', { day:'numeric', month:'short' });
+
+      return `
+        <div class="s-card">
+          <div class="s-av">${av}</div>
+          <div class="s-body">
+            <div class="s-nombre">
+              <a href="profile.html?id=${otro?._id}" style="color:inherit;text-decoration:none">${otro?.nombre || 'Usuario'}</a>
+              <span class="estado-badge estado-${s.estado}" style="margin-left:8px">${s.estado}</span>
+            </div>
+            <div class="s-intercambio">
+              <span class="s-badge">🎁 ${s.habilidadOfrece}</span>
+              <span class="s-arrow">↔</span>
+              <span class="s-badge">🔍 ${s.habilidadBusca}</span>
+            </div>
+            ${s.mensaje ? `<div class="s-msg">"${s.mensaje}"</div>` : ''}
+            <div class="s-fecha">${fecha}</div>
+            ${esRecibida && s.estado === 'pendiente' ? `
+              <div class="s-actions">
+                <button class="btn-aceptar"  onclick="responder('${s._id}','aceptada')">Aceptar</button>
+                <button class="btn-rechazar" onclick="responder('${s._id}','rechazada')">Rechazar</button>
+              </div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  async function responder(id, estado) {
+    try {
+      await responderSolicitud(id, estado);
+      await cargar();
+    } catch(e) { alert(e.message); }
+  }
+
+  function abrirModal()  { document.getElementById('modal').classList.add('open'); }
+  function cerrarModal() { document.getElementById('modal').classList.remove('open'); }
+
+  async function enviarSolicitud() {
+    const receptorId     = document.getElementById('m-receptor').value.trim();
+    const habilidadOfrece = document.getElementById('m-ofrece').value.trim();
+    const habilidadBusca  = document.getElementById('m-busca').value.trim();
+    const mensaje         = document.getElementById('m-mensaje').value.trim();
+    const errEl = document.getElementById('m-error');
+    errEl.classList.remove('visible');
+
+    if (!receptorId || !habilidadOfrece || !habilidadBusca) {
+      errEl.textContent = 'Completa los campos obligatorios.';
+      errEl.classList.add('visible');
+      return;
+    }
+    try {
+      await crearSolicitud(receptorId, habilidadOfrece, habilidadBusca, mensaje);
+      cerrarModal();
+      await cargar();
+    } catch(e) {
+      errEl.textContent = e.message;
+      errEl.classList.add('visible');
+    }
+  }
+
+</script>
+</body>
+</html>

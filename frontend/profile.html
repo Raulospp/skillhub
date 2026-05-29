@@ -263,8 +263,10 @@
   // CORRECCIÓN: lee siempre el ?id= de la URL.
   // Solo cae al propio si no hay ?id= en la URL.
   const params   = new URLSearchParams(window.location.search);
-  const urlId    = params.get('id');   // ID que viene en la URL (?id=xxx)
-  const esPropio = !urlId;             // si NO hay ?id= en la URL es perfil propio
+  // Codespaces a veces quita el ?id= de la URL — respaldo en sessionStorage
+  const urlId    = params.get('id') || sessionStorage.getItem('verPerfilId');
+  sessionStorage.removeItem('verPerfilId'); // limpiar siempre después de leer
+  const esPropio = !urlId;             // si NO hay ?id= es perfil propio
 
   const coloresAv = [
     'linear-gradient(135deg,#c8b8a2,#a08060)',
@@ -381,7 +383,7 @@
       if (esPropio) {
         actions.innerHTML = `<a href="edit-profile.html" class="btn-editar">✏ Editar perfil</a>`;
       } else {
-        actions.innerHTML = `<a href="chat.html?con=${perfil._id}" class="btn-chat">💬 Enviar mensaje</a>`;
+        actions.innerHTML = `<a href="chat.html?con=${perfil._id}" class="btn-chat" onclick="sessionStorage.setItem('chatCon','${perfil._id}')">💬 Enviar mensaje</a>`;
       }
 
       // Secciones candidata / empresa

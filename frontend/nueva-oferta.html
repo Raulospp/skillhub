@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Publicar oferta</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    body{background:#f5f4f1}
+    .page-wrap{max-width:680px;margin:0 auto;padding:40px 24px 80px}
+    .page-title{font-family:var(--font-display);font-size:1.8rem;color:var(--black);margin-bottom:6px}
+    .page-sub{font-size:.85rem;color:var(--gray-text);margin-bottom:32px}
+    .card{background:var(--white);border-radius:16px;padding:28px;margin-bottom:20px}
+    .card-title{font-size:.82rem;font-weight:600;color:var(--black);text-transform:uppercase;letter-spacing:.04em;margin-bottom:20px}
+    .field-group{display:flex;flex-direction:column;gap:14px}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field label{display:block;font-size:.78rem;color:var(--gray-text);margin-bottom:5px;font-weight:500}
+    .field input,.field textarea,.field select{width:100%;background:#f5f4f1;border:1.5px solid transparent;border-radius:10px;padding:11px 14px;font-family:var(--font-body);font-size:.85rem;color:var(--black);outline:none;transition:border-color .2s,background .2s}
+    .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--black);background:var(--white)}
+    .field textarea{resize:vertical;min-height:120px;line-height:1.6}
+    .info-box{background:#f0f7ff;border-left:3px solid #2563eb;border-radius:8px;padding:12px 16px;font-size:.82rem;color:#1e3a5f;line-height:1.6;margin-bottom:20px}
+    .save-bar{position:sticky;bottom:0;background:var(--white);border-top:1px solid #e0ddd8;padding:16px 24px;display:flex;align-items:center;gap:14px;margin:0 -24px -80px}
+    .btn-save{background:var(--black);color:var(--white);border:none;border-radius:10px;padding:12px 32px;font-family:var(--font-body);font-size:.9rem;font-weight:500;cursor:pointer}
+    .btn-save:disabled{opacity:.6;cursor:not-allowed}
+    .btn-cancel{background:transparent;border:1.5px solid var(--gray-mid);border-radius:10px;padding:12px 24px;font-family:var(--font-body);font-size:.9rem;cursor:pointer;color:var(--black);text-decoration:none}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+    .chip-sel{padding:7px 14px;border-radius:20px;font-size:.8rem;cursor:pointer;border:1.5px solid var(--gray-mid);background:var(--white);color:var(--gray-text);font-family:var(--font-body);transition:all .15s}
+    .chip-sel.on{background:var(--black);color:white;border-color:var(--black)}
+    .error-msg{color:#c62828;font-size:.82rem;margin-top:4px;display:none}
+    .error-msg.visible{display:block}
+    @media(max-width:600px){.field-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="home.html" class="navbar-logo">
+    <img src="logo.svg" style="width:24px;height:24px;" alt="SkillHub"/>SkillHub
+  </a>
+  <div class="navbar-spacer"></div>
+  <a href="explore.html" class="btn-nav">Explorar</a>
+  <a href="mis-ofertas.html" class="btn-nav">Mis ofertas</a>
+  <a href="profile.html" class="avatar-btn"><div class="avatar-inner" id="nav-avatar">??</div></a>
+</nav>
+
+<div class="page-wrap">
+  <h1 class="page-title">Publicar oferta</h1>
+  <p class="page-sub">Tu oferta será visible para candidatas y jóvenes en SkillHub.</p>
+
+  <div class="info-box">💡 Las ofertas dirigidas a <strong>mujeres</strong> o <strong>jóvenes</strong> tienen mayor visibilidad.</div>
+
+  <div class="card">
+    <div class="card-title">Información básica</div>
+    <div class="field-group">
+      <div class="field"><label>Título de la oferta *</label><input type="text" id="f-titulo" placeholder="Ej: Desarrolladora Frontend Junior"/></div>
+      <div class="field"><label>Descripción *</label><textarea id="f-descripcion" placeholder="Describe el rol, responsabilidades y lo que ofrecen..."></textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Ciudad</label><input type="text" id="f-ciudad" placeholder="Cali, Colombia"/></div>
+        <div class="field"><label>Modalidad</label>
+          <select id="f-modalidad">
+            <option value="Presencial">Presencial</option>
+            <option value="Remoto">Remoto</option>
+            <option value="Híbrido">Híbrido</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Categoría</label>
+          <select id="f-categoria">
+            <option value="">Selecciona</option>
+            <option>Tecnología</option><option>Diseño</option><option>Marketing</option>
+            <option>Finanzas</option><option>Bienestar</option><option>Idiomas</option><option>Otro</option>
+          </select>
+        </div>
+        <div class="field"><label>Compensación / Salario</label><input type="text" id="f-salario" placeholder="Ej: $2.000.000 COP / mes"/></div>
+      </div>
+      <div class="field"><label>Fecha límite</label><input type="date" id="f-fecha"/></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Requisitos</div>
+    <div class="field"><label>¿Qué perfil buscas?</label><textarea id="f-requisitos" placeholder="Ej: 1 año de experiencia, conocimientos en React..."></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">¿A quién va dirigida?</div>
+    <p style="font-size:.82rem;color:var(--gray-text);margin-bottom:12px">Esto filtra tu oferta para el público correcto.</p>
+    <div class="chips">
+      <button class="chip-sel on" id="chip-todas"   onclick="selDirigido('todas')">Todas las candidatas</button>
+      <button class="chip-sel"    id="chip-mujeres" onclick="selDirigido('mujeres')">Solo mujeres</button>
+      <button class="chip-sel"    id="chip-jovenes" onclick="selDirigido('jovenes')">Solo jóvenes</button>
+    </div>
+  </div>
+
+  <p class="error-msg" id="main-error"></p>
+
+  <div class="save-bar">
+    <button class="btn-save" id="btn-publicar" onclick="publicar()">Publicar oferta</button>
+    <a href="mis-ofertas.html" class="btn-cancel">Cancelar</a>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  requireAuth();
+  let dirigidoA = 'todas';
+
+  // Cargar nombre en navbar
+  obtenerMiPerfil().then(p => {
+    document.getElementById('nav-avatar').textContent = iniciales(p.nombre);
+  }).catch(() => {});
+
+  function selDirigido(val) {
+    dirigidoA = val;
+    ['todas','mujeres','jovenes'].forEach(v =>
+      document.getElementById('chip-'+v).classList.toggle('on', v === val)
+    );
+  }
+
+  async function publicar() {
+    const titulo      = document.getElementById('f-titulo').value.trim();
+    const descripcion = document.getElementById('f-descripcion').value.trim();
+    const errEl       = document.getElementById('main-error');
+    errEl.classList.remove('visible');
+
+    if (!titulo)      { errEl.textContent = 'El título es obligatorio.';      errEl.classList.add('visible'); return; }
+    if (!descripcion) { errEl.textContent = 'La descripción es obligatoria.'; errEl.classList.add('visible'); return; }
+
+    const btn = document.getElementById('btn-publicar');
+    setBtnLoading(btn, true, 'Publicar oferta');
+
+    try {
+      const oferta = await crearOferta({
+        titulo, descripcion, dirigidoA,
+        ciudad:     document.getElementById('f-ciudad').value.trim(),
+        modalidad:  document.getElementById('f-modalidad').value,
+        categoria:  document.getElementById('f-categoria').value,
+        salario:    document.getElementById('f-salario').value.trim(),
+        requisitos: document.getElementById('f-requisitos').value.trim(),
+        fechaLimite: document.getElementById('f-fecha').value || null,
+      });
+      sessionStorage.setItem('verOfertaId', oferta._id);
+      window.location.href = `oferta-detail.html?id=${oferta._id}`;
+    } catch(err) {
+      errEl.textContent = err.message;
+      errEl.classList.add('visible');
+      setBtnLoading(btn, false, 'Publicar oferta');
+    }
+  }
+</script>
+</body>
+</html>

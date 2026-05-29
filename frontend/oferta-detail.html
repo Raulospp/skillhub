@@ -169,7 +169,8 @@
   if (sesion) document.getElementById('nav-avatar').textContent = iniciales(sesion.nombre);
 
   const params   = new URLSearchParams(window.location.search);
-  const ofertaId = params.get('id');
+  const ofertaId = params.get('id') || sessionStorage.getItem('verOfertaId');
+  sessionStorage.removeItem('verOfertaId');
   if (!ofertaId) window.location.href = 'explore.html';
 
   let oferta = null;

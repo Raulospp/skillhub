@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillHub — Guardados</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    body { background: var(--bg); }
+    .page { max-width: 800px; margin: 0 auto; padding: 32px 24px; }
+    .page-title { font-family: var(--font-display); font-size: 1.8rem; color: var(--black); margin-bottom: 6px; }
+    .page-sub   { font-size: 0.85rem; color: var(--gray-text); margin-bottom: 28px; }
+
+    .tabs { display: flex; gap: 4px; background: var(--white); border-radius: 12px; padding: 4px; margin-bottom: 24px; max-width: 280px; }
+    .tab { flex: 1; padding: 8px; border: none; background: transparent; border-radius: 9px; font-family: var(--font-body); font-size: 0.85rem; font-weight: 500; color: var(--gray-text); cursor: pointer; transition: all .15s; }
+    .tab.active { background: var(--black); color: var(--white); }
+
+    /* Grid de cards */
+    .grid-favs { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+
+    /* Card perfil */
+    .pcard { background: var(--white); border-radius: var(--radius); padding: 20px; text-decoration: none; color: inherit; display: block; position: relative; transition: transform .15s; }
+    .pcard:hover { transform: translateY(-2px); }
+    .pcard-head { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .pcard-av { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,#c8b8a2,#a08060); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; color: white; flex-shrink: 0; overflow: hidden; }
+    .pcard-av img { width: 100%; height: 100%; object-fit: cover; }
+    .pcard-name { font-size: 0.95rem; font-weight: 600; color: var(--black); }
+    .pcard-sub  { font-size: 0.78rem; color: var(--gray-text); }
+    .pcard-skills { font-size: 0.8rem; color: var(--gray-text); margin: 8px 0; }
+
+    /* Card oferta */
+    .ocard { background: var(--white); border-radius: var(--radius); padding: 20px; text-decoration: none; color: inherit; display: block; position: relative; transition: transform .15s; }
+    .ocard:hover { transform: translateY(-2px); }
+    .ocard-title { font-size: 0.98rem; font-weight: 600; color: var(--black); margin-bottom: 6px; }
+    .ocard-meta  { font-size: 0.78rem; color: var(--gray-text); display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .ocard-tag   { background: #f0ede8; border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; color: var(--black); }
+
+    /* Botón quitar favorito */
+    .btn-quitar { position: absolute; top: 14px; right: 14px; background: transparent; border: none; font-size: 1.1rem; cursor: pointer; opacity: 0.5; transition: opacity .15s; }
+    .btn-quitar:hover { opacity: 1; }
+
+    .empty-state { text-align: center; padding: 80px 20px; color: var(--gray-text); }
+    .empty-state .emoji { font-size: 2.5rem; margin-bottom: 12px; }
+    .loading { text-align: center; padding: 40px; color: var(--gray-text); font-size: 0.9rem; }
+
+    .colores { --c0:linear-gradient(135deg,#c8b090,#a07050);--c1:linear-gradient(135deg,#8090a0,#506070);--c2:linear-gradient(135deg,#c8b8a2,#a08060);--c3:linear-gradient(135deg,#a0c8a0,#608060);--c4:linear-gradient(135deg,#d0a0c0,#a06080); }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="home.html" class="navbar-logo">
+    <img src="logo.svg" style="width:24px;height:24px;" alt="SkillHub"/>
+    SkillHub
+  </a>
+  <div class="navbar-spacer"></div>
+  <a href="explore.html"         class="btn-nav">Explorar</a>
+  <a href="solicitudes.html"     class="btn-nav">Solicitudes</a>
+  <a href="notificaciones.html"  class="btn-nav">Notificaciones</a>
+  <a href="profile.html" class="avatar-btn">
+    <div class="avatar-inner" id="nav-avatar">??</div>
+  </a>
+</nav>
+
+<div class="page colores">
+  <h1 class="page-title">Guardados</h1>
+  <p class="page-sub">Perfiles y ofertas que guardaste para revisar después.</p>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-perfiles" onclick="cambiarTab('perfil')">Perfiles</button>
+    <button class="tab"        id="tab-ofertas"  onclick="cambiarTab('oferta')">Ofertas</button>
+  </div>
+
+  <div class="grid-favs" id="grid"><div class="loading">Cargando...</div></div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  requireAuth();
+  const sesion = getUsuario();
+  if (sesion) document.getElementById('nav-avatar').textContent = iniciales(sesion.nombre);
+
+  const colores = ['linear-gradient(135deg,#c8b090,#a07050)','linear-gradient(135deg,#8090a0,#506070)',
+    'linear-gradient(135deg,#c8b8a2,#a08060)','linear-gradient(135deg,#a0c8a0,#608060)',
+    'linear-gradient(135deg,#d0a0c0,#a06080)'];
+  const colorPor = i => colores[i % colores.length];
+
+  let tabActual = 'perfil';
+  // Cache de datos enriquecidos
+  let datosPerfiles = [];
+  let datosOfertas  = [];
+
+  async function cargar(tipo) {
+    document.getElementById('grid').innerHTML = '<div class="loading">Cargando...</div>';
+    try {
+      const favs = await obtenerFavoritos(tipo);
+      if (!favs.length) {
+        document.getElementById('grid').innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1">
+            <div class="emoji">${tipo === 'perfil' ? '👤' : '💼'}</div>
+            <p>No tienes ${tipo === 'perfil' ? 'perfiles' : 'ofertas'} guardados aún</p>
+            <a href="explore.html" style="color:var(--black);font-size:0.85rem;margin-top:8px;display:inline-block">Ir a explorar →</a>
+          </div>`;
+        return;
+      }
+
+      // Enriquecer: buscar datos de cada referencia
+      const items = await Promise.all(favs.map(async (f, i) => {
+        try {
+          if (tipo === 'perfil') {
+            const u = await obtenerPerfil(f.referenciaId);
+            return renderPerfil(u, i, f._id);
+          } else {
+            const o = await obtenerOferta(f.referenciaId);
+            return renderOferta(o, i, f._id);
+          }
+        } catch { return ''; }
+      }));
+
+      document.getElementById('grid').innerHTML = items.filter(Boolean).join('') ||
+        `<div class="empty-state" style="grid-column:1/-1"><div class="emoji">⚠️</div><p>No se pudieron cargar los datos</p></div>`;
+    } catch(e) {
+      document.getElementById('grid').innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="emoji">⚠️</div><p>${e.message}</p></div>`;
+    }
+  }
+
+  function renderPerfil(u, i, favId) {
+    const av = u.avatar
+      ? `<img src="${u.avatar}" alt=""/>`
+      : iniciales(u.nombre);
+    const skills = (u.serviciosOfrece||[]).map(s=>s.titulo).slice(0,3).join(' · ') || 'Sin servicios publicados';
+    return `
+      <a class="pcard" href="profile.html?id=${u._id}">
+        <button class="btn-quitar" onclick="quitar(event,'${favId}','perfil')">🗑</button>
+        <div class="pcard-head">
+          <div class="pcard-av" style="background:${colorPor(i)}">${av}</div>
+          <div>
+            <div class="pcard-name">${u.nombre}</div>
+            <div class="pcard-sub">${u.rol||'Candidata'} · ${u.ciudad||'Colombia'}</div>
+          </div>
+        </div>
+        <div class="pcard-skills">${skills}</div>
+        <div style="font-size:0.78rem;color:var(--gray-text);margin-top:8px">⭐ ${u.valoracion?.toFixed(1)||'—'} · ${u.horasAportadas||0} h aportadas</div>
+      </a>`;
+  }
+
+  function renderOferta(o, i, favId) {
+    const emp = o.empresaId || {};
+    return `
+      <a class="ocard" href="oferta-detail.html?id=${o._id}">
+        <button class="btn-quitar" onclick="quitar(event,'${favId}','oferta')">🗑</button>
+        <div class="ocard-title">${o.titulo}</div>
+        <div class="ocard-meta">
+          <span>🏢 ${emp.nombreEmpresa||emp.nombre||'Empresa'}</span>
+          ${o.ciudad ? `<span>📍 ${o.ciudad}</span>` : ''}
+          ${o.modalidad ? `<span>🖥 ${o.modalidad}</span>` : ''}
+        </div>
+        <div>
+          ${o.categoria  ? `<span class="ocard-tag">${o.categoria}</span> ` : ''}
+          ${o.dirigidoA && o.dirigidoA !== 'todas' ? `<span class="ocard-tag">Para ${o.dirigidoA}</span>` : ''}
+        </div>
+      </a>`;
+  }
+
+  async function quitar(e, favId, tipo) {
+    e.preventDefault();
+    e.stopPropagation();
+    // El toggle quita si ya existe — pero aquí usamos el _id del favorito directamente
+    // Recargamos después de quitar
+    try {
+      // Obtenemos la referencia del favorito para hacer toggle
+      const favs = await obtenerFavoritos(tipo);
+      const fav  = favs.find(f => f._id === favId);
+      if (fav) await toggleFavorito(fav.referenciaId, tipo);
+      cargar(tipo);
+    } catch(err) { alert(err.message); }
+  }
+
+  function cambiarTab(tipo) {
+    tabActual = tipo;
+    document.getElementById('tab-perfiles').classList.toggle('active', tipo === 'perfil');
+    document.getElementById('tab-ofertas').classList.toggle('active',  tipo === 'oferta');
+    cargar(tipo);
+  }
+
+  cargar(tabActual);
+</script>
+</body>
+</html>
